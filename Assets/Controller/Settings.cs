@@ -9,23 +9,23 @@ public class Settings
 
     private readonly Dictionary<string, ParameterApplier> settings;
 
-    public WindowHandler WindowHandler { get => (WindowHandler)GetParameters("Window"); private set => AddParameters("Window", value); }
+    public WindowSettings WindowHandler { get => (WindowSettings)GetParameters("Window"); private set => AddParameters("Window", value); }
     public Fractal Fractal { get => (Fractal)GetParameters("Fractal"); private set => AddParameters("Fractal", value); }
-    public TextureHandler TextureHandler { get => (TextureHandler)GetParameters("Texture"); private set => AddParameters("Texture", value); }
+    public TextureSettings TextureHandler { get => (TextureSettings)GetParameters("Texture"); private set => AddParameters("Texture", value); }
 
     public Settings()
     {
         settings = new Dictionary<string, ParameterApplier>();
-        WindowHandler = new WindowHandler();
+        WindowHandler = new WindowSettings();
         Fractal = new Mandelbrot();
-        TextureHandler = new TextureHandler();
+        TextureHandler = new TextureSettings();
     }
     public Settings(Settings seed)
     {
         settings = new Dictionary<string, ParameterApplier>();
-        WindowHandler = new WindowHandler(seed.WindowHandler);
+        WindowHandler = new WindowSettings(seed.WindowHandler);
         Fractal = new Mandelbrot((Mandelbrot)seed.Fractal);
-        TextureHandler = new TextureHandler(seed.TextureHandler);
+        TextureHandler = new TextureSettings(seed.TextureHandler);
     }
 
     public void AddParameters(string name, ParameterApplier parameters) { settings.Add(name, parameters); }

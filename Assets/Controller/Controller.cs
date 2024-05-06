@@ -62,7 +62,7 @@ public class Controller : MonoBehaviour
         string[] files = Directory.GetFiles(ConfigurationHandler.CurrentContentFolder);
         if (files.Length == 0)
             return;
-        Singleton.Plotter.material.SetTexture("_Texture", TextureLoader.GetImageFromPath(files[0]));
+        Singleton.Plotter.material.SetTexture("_Texture", TextureHandler.GetImageFromPath(files[0]));
     }
 
     public static void TogglePlay(bool play)

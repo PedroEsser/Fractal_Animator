@@ -11,7 +11,7 @@ public class FractalPlotter : MonoBehaviour
 
     private Vector2 beginDragCenter;
 
-    public WindowHandler WindowHandler { get => ConfigurationHandler.CurrentConfig.Settings.WindowHandler; }
+    public WindowSettings WindowHandler { get => ConfigurationHandler.CurrentConfig.Settings.WindowHandler; }
 
     void Start()
     {

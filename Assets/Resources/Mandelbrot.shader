@@ -3,8 +3,10 @@ Shader "Fractal/Mandelbrot"
     Properties
     {
         _Texture("Texture", 2D) = "white"
+        _CarpetTransformation("CarpetTransformation", vector) = (0, 0, 1, 1)
+        //_Textures("Textures", 2DArray) = "" {}
+       // _TexturesTransformations("TexturesTransformations", vector) = (0, 0, 1, 1)
         _Window("Window", vector) = (0, 0, 4, 4)
-        _TextureTransformation("TextureTransformation", vector) = (0, 0, 1, 1)
         _MaxIter("MaxIter", Float) = 32
         _Color("Color", vector) = (1, 1, 1, 1)
         _LightAngle("LightAngle", Float) = 0
@@ -43,11 +45,16 @@ Shader "Fractal/Mandelbrot"
                     float4 vertex : SV_POSITION;
                 };
 
+                float4 _Window;
+                float _Angle;
+
                 v2f vert(appdata v)
                 {
                     v2f o;
                     o.vertex = UnityObjectToClipPos(v.vertex);
-                    o.uv = v.uv;
+                    o.uv = (v.uv - .5) * _Window.zw;
+                    o.uv = complex_mul(polar_to_rect(_Angle), o.uv.xy);
+                    o.uv += _Window.xy;
                     return o;
                 }
 
@@ -55,23 +62,22 @@ Shader "Fractal/Mandelbrot"
                 static const float TAU = 6.28318530717958647692;
                 float _MaxIter;
                 float _EscapeRadius;
-                float4 _Window;
-                float4 _TextureTransformation;
+                float4 _CarpetTransformation;
+                float _TextureIndices[500];
+                float4 _TextureTransformations[1000];
                 sampler2D _Texture;
                 float4 _Color;
                 float _LightAngle;
                 float _LightHeight;
                 float _LightTextureAngle;
-                float _Angle;
                 float4 _ZStart;
                 float4 _Power;
-                
+                //UNITY_DECLARE_TEX2DARRAY(_Textures);
+
 
                 fixed4 frag(v2f i) : SV_Target
                 {
-                    float2 c = (i.uv - .5) * _Window.zw;
-                    c = complex_mul(polar_to_rect(_Angle), c);
-                    c += _Window.xy;
+                    float2 c = i.uv;
                     float2 z = float2(0.000000001, 0) + _ZStart.xy;
                     float2 aux;
                     float4 col = float4(0, 0, 0, 0);
@@ -110,12 +116,12 @@ Shader "Fractal/Mandelbrot"
                     brightness /= (1 + _LightHeight);
                     brightness = max(0, brightness);
                     //brightness = 1;
-                    
-                    light = _TextureTransformation.zw;
-                    light.y /= -4;
 
-                    col = tex2D(_Texture, _TextureTransformation.xy + light * float2(textureX, smoothIteration));
-                    return col * brightness;
+                    light = _CarpetTransformation.zw;
+                    light.y /= -4;
+                    col = tex2D(_Texture, _CarpetTransformation.xy + light * float2(textureX, smoothIteration));  //UNITY_SAMPLE_TEX2DARRAY(_Textures, i.uv);
+                    
+                    return (col * col.w + (1-col.w) * _Color) * brightness;
                 }
                 ENDCG
             }

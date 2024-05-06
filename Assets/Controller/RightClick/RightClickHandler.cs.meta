@@ -3,7 +3,8 @@ guid: d2aadea861d7a174b8e7ce945dc8f9fc
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - RightClickWindowPrefab: {fileID: -2417237910492280803, guid: ca0320b7d3115914d87c3622eca9c029, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
