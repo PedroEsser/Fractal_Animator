@@ -11,14 +11,24 @@ public class InfiniteCarpet : ParameterApplier
     //public ColorParameter BackgroundColor;
     public List<TextureParameter> TextureParameters;
     public List<string> TexturesMapping;
-    [NonSerialized()] public Texture2DArray LoadedTextures;
+
+    [NonSerialized()] 
+    public Texture2DArray LoadedTextures;
 
     public InfiniteCarpet()
     {
-        Length = 10;
+        Length = 1;
         TextureParameters = new List<TextureParameter>();
         TexturesMapping = new List<string>();
     }
+
+    public InfiniteCarpet(InfiniteCarpet seed)
+    {
+        Length = seed.Length;
+        TextureParameters = seed.TextureParameters;
+        TexturesMapping = seed.TexturesMapping;
+    }
+
 
     public ParameterHandler GetParameters()
     {
@@ -32,41 +42,79 @@ public class InfiniteCarpet : ParameterApplier
     {
         float[] textureIndices = new float[500];
         Vector4[] TextureTransformations = new Vector4[1000];
+        Color[] TextureColors = new Color[500];
         for(int i = 0; i < TextureParameters.Count; i++)
         {
             TextureParameter tex = TextureParameters[i];
             textureIndices[i] = IndexForTexture(tex.TextureName);
-            TextureTransformations[i * 2 + 0] = new Vector4(tex.Position.X.GetValue(), tex.Position.Y.GetValue(), tex.Size.X.GetValue(), tex.Size.Y.GetValue());
-            TextureTransformations[i * 2 + 1] = new Vector4(tex.Offset.X.GetValue(), tex.Offset.Y.GetValue(), tex.Scale.X.GetValue(), tex.Scale.Y.GetValue());
+            TextureColors[i] = tex.Color.GetValue().ToColor();
+            TextureTransformations[i * 2 + 0] = new Vector4(tex.Position.X.GetValue(), tex.Position.Y.GetValue(), tex.Size.X.GetValue()/2, tex.Size.Y.GetValue()/2);
+            TextureTransformations[i * 2 + 1] = new Vector4(tex.Offset.X.GetValue(), tex.Offset.Y.GetValue(), tex.Scale.X.GetValue()/2, tex.Scale.Y.GetValue()/2);
         }
         mat.SetFloat("_Length", Length);
-        mat.SetFloatArray("_TexturesIndices", textureIndices);
-        mat.SetInt("_TexturesCount", TextureParameters.Count);
-        mat.SetVectorArray("_TexturesTransformations", TextureTransformations);
-        mat.SetTexture("_Textures", LoadedTextures);
+        mat.SetFloatArray("_TextureIndices", textureIndices);
+        mat.SetInt("_TextureCount", TextureParameters.Count);
+        mat.SetVectorArray("_TextureTransformations", TextureTransformations);
+        mat.SetColorArray("_TextureColors", TextureColors);
+        if(LoadedTextures != null)
+            mat.SetTexture("_Textures", LoadedTextures);
     }
 
-    public void LoadTextures()
+    private void UpdateTexturesMapping()
     {
-        LoadedTextures = new Texture2DArray(TextureHandler.TEXTURE_SIZE, TextureHandler.TEXTURE_SIZE, TexturesMapping.Count, UnityEngine.Experimental.Rendering.DefaultFormat.HDR, UnityEngine.Experimental.Rendering.TextureCreationFlags.None);
+        List<string> newTexturesMapping = new List<string>();
+        foreach(TextureParameter par in TextureParameters)
+        {
+            if (!newTexturesMapping.Contains(par.TextureName))
+                newTexturesMapping.Add(par.TextureName);
+        }
+        TexturesMapping = newTexturesMapping;
+        UpdateTextures();
+    }
+
+    public void UpdateTextures()
+    {
+        if (TextureParameters.Count == 0)
+            return;
+        LoadedTextures = new Texture2DArray(TextureHandler.TEXTURE_SIZE, TextureHandler.TEXTURE_SIZE, TexturesMapping.Count, TextureFormat.RGBA32, false);
         for(int i = 0; i < TexturesMapping.Count; i++)
         {
-            LoadedTextures.SetPixels32(TextureHandler.GetTexture(TexturesMapping[i]).GetPixels32(), i);
+            Texture2D tex = TextureHandler.GetTexture(TexturesMapping[i]);
+            LoadedTextures.SetPixels32(tex.GetPixels32(), i);
         }
         LoadedTextures.Apply();
     }
 
-    public TextureParameter AddTexture(string name, string textureName)
+    public TextureParameter AddTexture(string name, string textureName = null)
     {
         TextureParameter tex = new TextureParameter(name, textureName);
         TextureParameters.Add(tex);
-        if (!TexturesMapping.Contains(textureName))
+        if (textureName != null && !TexturesMapping.Contains(textureName))
         {
             TexturesMapping.Add(textureName);
-            LoadTextures();
+            UpdateTextures();
         }
-
+        tex.BindTimeline(ConfigurationHandler.CurrentConfig.Timeline);
         return tex;
+    }
+
+    public void HandleTextureChange(TextureParameter par, string newTextureName)
+    {
+        par.TextureName = newTextureName;
+        UpdateTexturesMapping();
+    }
+
+    public void HandleTextureDelete(string name)
+    {
+        foreach(TextureParameter par in TextureParameters)
+        {
+            if(par.Name == name)
+            {
+                TextureParameters.Remove(par);
+                break;
+            }
+        }
+        UpdateTexturesMapping();
     }
 
     private int IndexForTexture(string name) { return TexturesMapping.IndexOf(name); }

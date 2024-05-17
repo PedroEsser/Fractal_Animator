@@ -35,6 +35,7 @@ public class TextureSettings : ParameterApplier
     public TextureSettings(TextureSettings seed)
     {
         CarpetParameters = new ParameterHandler(seed.CarpetParameters);
+        Carpet = new InfiniteCarpet(seed.Carpet);
     }
 
     public ParameterHandler GetParameters()

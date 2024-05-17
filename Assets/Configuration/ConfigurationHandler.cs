@@ -8,8 +8,8 @@ using UnityEngine.Events;
 public static class ConfigurationHandler
 {
 
-    public static readonly string CONFIG_TXT_PATH = "Assets/Configuration/config.txt";
-    public static readonly string CONFIG_FOLDER_PATH = "Assets/Configuration/configs/";
+    public static readonly string CONFIG_TXT_PATH = "Assets\\Configuration\\config.txt";
+    public static readonly string CONFIG_FOLDER_PATH = "Assets\\Configuration\\configs\\";
     public static readonly string DEFAULT_CONFIG_NAME = "default_config";
 
     

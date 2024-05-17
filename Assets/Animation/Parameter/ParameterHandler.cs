@@ -24,8 +24,10 @@ public class ParameterHandler
     {
         if (HasParameter(name))
             throw new Exception("Parameter \"" + name + "\" already exists.");
+
         NumberParameter p = new NumberParameter(name, value, isInt);
         AddParameter(p);
+
         return p;
     }
 
@@ -36,6 +38,17 @@ public class ParameterHandler
 
         VectorParameter p = new VectorParameter(name, value);
         AddVectorParameter(p);
+
+        return p;
+    }
+
+    public ColorParameter CreateColorParameter(string name, Color32 color)
+    {
+        if (HasColorParameter(name))
+            throw new Exception("Parameter \"" + name + "\" already exists.");
+
+        ColorParameter p = new ColorParameter(name, color);
+        AddColorParameter(p);
 
         return p;
     }
@@ -63,6 +76,16 @@ public class ParameterHandler
         AddParameter(parameter.X);
         AddParameter(parameter.Y);
     }
+
+    public void AddColorParameter(ColorParameter parameter)
+    {
+        AddParameter(parameter.R);
+        AddParameter(parameter.G);
+        AddParameter(parameter.B);
+        AddParameter(parameter.A);
+
+    }
+
     public void AddTextureParameter(TextureParameter parameter) 
     {
         AddVectorParameter(parameter.Position);
@@ -73,6 +96,11 @@ public class ParameterHandler
 
     public bool HasParameter(string name) { return Parameters.ContainsKey(name); }
     public bool HasVectorParameter(string name) { return HasParameter(name + VectorParameter.X_SUFFIX) || HasParameter(name + VectorParameter.Y_SUFFIX); }
+    
+    public bool HasColorParameter(string name) { 
+        return HasParameter(name + ColorParameter.R_SUFFIX) || HasParameter(name + ColorParameter.G_SUFFIX)
+            || HasParameter(name + ColorParameter.B_SUFFIX) || HasParameter(name + ColorParameter.A_SUFFIX); 
+    }
     public bool HasTextureParameter(string name) 
     {
         return 
@@ -96,6 +124,21 @@ public class ParameterHandler
             return new VectorParameter(name, Parameters[name + VectorParameter.X_SUFFIX], Parameters[name + VectorParameter.Y_SUFFIX]);
         return null;
     }
+
+    public ColorParameter FindColorParameter(string name)
+    {
+        if(HasParameter(name + ColorParameter.R_SUFFIX) && HasParameter(name + ColorParameter.G_SUFFIX)
+            && HasParameter(name + ColorParameter.B_SUFFIX) && HasParameter(name + ColorParameter.A_SUFFIX))
+        {
+            return new ColorParameter(name, 
+                Parameters[name + ColorParameter.R_SUFFIX], 
+                Parameters[name + ColorParameter.G_SUFFIX], 
+                Parameters[name + ColorParameter.B_SUFFIX], 
+                Parameters[name + ColorParameter.A_SUFFIX], false);
+        }
+        return null;
+    }
+
     public VectorParameter FindTextureParameter(string name)
     {
         if (Parameters.ContainsKey(name + VectorParameter.X_SUFFIX) && Parameters.ContainsKey(name + VectorParameter.Y_SUFFIX))
@@ -108,7 +151,7 @@ public class ParameterHandler
         Dictionary<string, NumberParameter> numbers = new Dictionary<string, NumberParameter>();
 
         foreach (KeyValuePair<string, NumberParameter> t in Parameters)
-            if (!t.Key.EndsWith(VectorParameter.X_SUFFIX) && !t.Key.EndsWith(VectorParameter.Y_SUFFIX))
+            if (!t.Key.EndsWith(")"))
                 numbers.Add(t.Key, t.Value);
 
         return numbers;

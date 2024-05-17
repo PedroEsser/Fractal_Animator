@@ -7,6 +7,8 @@ public class ParameterWindow : MonoBehaviour
 
     public NumberParameterUI NumberParameterUIPrefab;
     public VectorParameterUI VectorParameterUIPrefab;
+    public ColorParameterUI ColorParameterUIPrefab;
+    public TextureParameterUI TextureParameterUIPrefab;
     public Transform ParameterContainer;
     public ParameterHandler parameters;
 

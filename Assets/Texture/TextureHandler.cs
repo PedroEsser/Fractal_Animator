@@ -7,7 +7,7 @@ public class TextureHandler : MonoBehaviour
 {
 
     public static readonly int TEXTURE_SIZE = 2048;
-    public static readonly string DEFAULT_TEXTURES_PATH = "Assets/Texture/DefaultTextures";
+    public static readonly string DEFAULT_TEXTURES_PATH = "Assets\\Texture\\DefaultTextures\\";
     public static TextureHandler HANDLER { get; private set; }
     public Dictionary<string, Texture2D> DefaultTextures;
     public Dictionary<string, Texture2D> UserTextures;
@@ -17,7 +17,6 @@ public class TextureHandler : MonoBehaviour
         HANDLER = this;
         LoadDefaultTextures();
         LoadUserTextures();
-        ConfigurationHandler.CurrentConfig.Settings.TextureHandler.Carpet.AddTexture("Test", "TransparentShrooms");
     }
 
     public static string HandleTextureLoad(string path)
@@ -27,7 +26,6 @@ public class TextureHandler : MonoBehaviour
         try
         {
             File.Copy(path, ConfigurationHandler.CurrentContentFolder + name);
-            tex.Resize(TEXTURE_SIZE, TEXTURE_SIZE);
             HANDLER.UserTextures.Add(name, tex);
         }
         catch { print("File copy failed"); }
@@ -83,7 +81,24 @@ public class TextureHandler : MonoBehaviour
         byte[] rawData = File.ReadAllBytes(path);
         Texture2D tex = new Texture2D(2, 2);
         tex.LoadImage(rawData);
-        return tex;
+        //tex.Apply();
+
+        /*Texture2D newTex = new Texture2D(tex.width, tex.height, TextureFormat.RGBA32, false);
+        newTex.SetPixels32(tex.GetPixels32());
+        newTex.Apply();*/
+        return Resize(tex, TEXTURE_SIZE, TEXTURE_SIZE);
+    }
+
+    public static Texture2D Resize(Texture2D texture2D, int width, int height)
+    {
+        RenderTexture rt = new RenderTexture(width, height, 32);
+        RenderTexture.active = rt;
+        Graphics.Blit(texture2D, rt);
+        Texture2D result = new Texture2D(width, height);
+        result.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+        result.Apply();
+        RenderTexture.active = null;
+        return result;
     }
 
     public static bool IsImage(string path) { return path.EndsWith(".png") || path.EndsWith(".jpg") || path.EndsWith(".jpeg"); }

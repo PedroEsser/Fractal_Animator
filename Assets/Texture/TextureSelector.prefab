@@ -377,6 +377,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7999545533717345340}
     m_Modifications:
+    - target: {fileID: 1362621235644941290, guid: ac44db72b05dff64292cb01db9f1ece4, type: 3}
+      propertyPath: multiselect
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1518885251820850164, guid: ac44db72b05dff64292cb01db9f1ece4, type: 3}
       propertyPath: m_Text
       value: Load Texture...
@@ -438,6 +442,18 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 6062239667441332720}
     - target: {fileID: 5861169882084802599, guid: ac44db72b05dff64292cb01db9f1ece4, type: 3}
+      propertyPath: m_Colors.m_SelectedColor.b
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5861169882084802599, guid: ac44db72b05dff64292cb01db9f1ece4, type: 3}
+      propertyPath: m_Colors.m_SelectedColor.g
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5861169882084802599, guid: ac44db72b05dff64292cb01db9f1ece4, type: 3}
+      propertyPath: m_Colors.m_SelectedColor.r
+      value: 0.375
+      objectReference: {fileID: 0}
+    - target: {fileID: 5861169882084802599, guid: ac44db72b05dff64292cb01db9f1ece4, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
       value: 1
       objectReference: {fileID: 0}
@@ -448,18 +464,18 @@ PrefabInstance:
     - target: {fileID: 5861169882084802599, guid: ac44db72b05dff64292cb01db9f1ece4, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 6062239667441332720}
+      objectReference: {fileID: 6165087645303418630}
     - target: {fileID: 5861169882084802599, guid: ac44db72b05dff64292cb01db9f1ece4, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5861169882084802599, guid: ac44db72b05dff64292cb01db9f1ece4, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: LoadNewTexture
+      value: LoadFile
       objectReference: {fileID: 0}
     - target: {fileID: 5861169882084802599, guid: ac44db72b05dff64292cb01db9f1ece4, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: TextureSelector, Assembly-CSharp
+      value: FileLoader, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5861169882084802599, guid: ac44db72b05dff64292cb01db9f1ece4, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName

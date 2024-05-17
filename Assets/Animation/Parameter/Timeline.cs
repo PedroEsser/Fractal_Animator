@@ -43,7 +43,7 @@ public class Timeline
     public int GetCurrentFrame() { return Mathf.FloorToInt(currentTime); }
     public int SetCurrentFrame(float frame) 
     { 
-        currentTime = Mathf.Max(0, Mathf.Min(duration, Mathf.RoundToInt(frame)));
+        CurrentTime = Mathf.Max(0, Mathf.Min(duration, Mathf.RoundToInt(frame)));
         return GetCurrentFrame();
     }
 

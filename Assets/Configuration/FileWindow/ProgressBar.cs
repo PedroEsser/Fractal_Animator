@@ -9,7 +9,7 @@ public class ProgressBar : MonoBehaviour
     public RectTransform Progress;
     public RectTransform Background;
     public Text text;
-    public float progress;
+    public float progress = 0;
     public bool paused = false;
     public Button PlayButton;
     public Sprite Play, Pause;

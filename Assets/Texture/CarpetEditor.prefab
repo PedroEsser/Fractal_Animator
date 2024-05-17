@@ -118,6 +118,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Image: {fileID: 6529946175095478279}
   plot: {fileID: 7983749708731497345}
+  Carpet:
+    Length: 10
+    TextureParameters: []
+    TexturesMapping: []
 --- !u!1001 &8252999817295737734
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -257,6 +261,14 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1897692565182279397, guid: 105c9a987cce7e24499576fdbe7bdb52, type: 3}
+      propertyPath: offset
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1897692565182279397, guid: 105c9a987cce7e24499576fdbe7bdb52, type: 3}
+      propertyPath: smoothOffset
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2888932620244757377, guid: 105c9a987cce7e24499576fdbe7bdb52, type: 3}
       propertyPath: m_Material
       value: 
@@ -284,6 +296,10 @@ PrefabInstance:
     - target: {fileID: 3224079700685535604, guid: 105c9a987cce7e24499576fdbe7bdb52, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4191221694445080988, guid: 105c9a987cce7e24499576fdbe7bdb52, type: 3}
+      propertyPath: offset
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4191221694445080988, guid: 105c9a987cce7e24499576fdbe7bdb52, type: 3}
       propertyPath: isActive

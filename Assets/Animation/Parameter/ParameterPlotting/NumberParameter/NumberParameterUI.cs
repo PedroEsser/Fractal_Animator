@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public class NumberParameterUI : ParameterUI<float>
 {
 
-    public NumberParameter parameter;
     public GameObject InterpolationUIPrefab;
     public Texture2D CursorTexture;
 
@@ -23,8 +22,8 @@ public class NumberParameterUI : ParameterUI<float>
     void Start()
     {
         UpdateOptions();
-        axisPlotter.button.onBeginDrag.AddListener(p => beginDragValue = parameter.GetValue());
-        axisPlotter.button.onEndDrag.AddListener(p => UndoHandler.DoParameterSetAction(parameter, parameter.GetValue(), beginDragValue));
+        axisPlotter.button.onBeginDrag.AddListener(p => beginDragValue = Parameter.GetValue());
+        axisPlotter.button.onEndDrag.AddListener(p => UndoHandler.DoParameterSetAction(Parameter, Parameter.GetValue(), beginDragValue));
     }
 
     void UpdateOptions()
@@ -40,19 +39,18 @@ public class NumberParameterUI : ParameterUI<float>
         }
         rightClickable.AddOption("Edit Interpolation", () =>
         {
-            HermiteSplineInterpolationUI interpolationUI = PopupWindowHandler.HandlePopup(InterpolationUIPrefab, parameter.Name + " Interpolation").GetComponent< HermiteSplineInterpolationUI>();
-            interpolationUI.SetInterpolation((HermiteSplineInterpolation)parameter.interpolation);
+            HermiteSplineInterpolationUI interpolationUI = PopupWindowHandler.HandlePopup(InterpolationUIPrefab, Parameter.Name + " Interpolation").GetComponent< HermiteSplineInterpolationUI>();
+            interpolationUI.SetInterpolation((HermiteSplineInterpolation)Parameter.interpolation);
         });
     }
 
     public override void SetParameter(Parameter<float> parameter)
     {
+        base.SetParameter(parameter);
         NumberParameter par = (NumberParameter)parameter;
-        this.parameter = par;
         axisPlotter.SetParameter(par);
         inputPlotter.SetParameter(par);
         keyFrameUI.SetParameter(par);
-        NameText.text = par.Name;
     }
 
     public void SetAxisPlotter()
@@ -71,20 +69,20 @@ public class NumberParameterUI : ParameterUI<float>
         UpdateOptions();
     }
 
-    public void BeginNameDrag(BaseEventData eventData) { beginDragValue = parameter.GetValue(); }
+    public void BeginNameDrag(BaseEventData eventData) { beginDragValue = Parameter.GetValue(); }
 
     public void NameDrag(BaseEventData eventData)
     {
         PointerEventData ev = (PointerEventData)eventData;
         float delta = (float)(ev.delta.x * axisPlotter.axis.window);
-        parameter.SetValue(parameter.GetValue() + delta / 1000f);
+        Parameter.SetValue(Parameter.GetValue() + delta / 1000f);
     }
 
     public void EndNameDrag(BaseEventData eventData)
     {
         if (!Input.GetMouseButton(0))
         {
-            UndoHandler.DoParameterSetAction(parameter, parameter.GetValue(), beginDragValue);
+            UndoHandler.DoParameterSetAction(Parameter, Parameter.GetValue(), beginDragValue);
         }
     }
 

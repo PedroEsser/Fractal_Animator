@@ -1,19 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static VectorParameter;
 
-public class InputVectorPlotter : ParameterPlotter<Vector2>
+public class InputVectorPlotter : ParameterPlotter<Vector2Data>
 {
 
     public NumberParameterUI xUI;
     public NumberParameterUI yUI;
 
-    public override void UpdatePlotter(Vector2 value)
+    public override void UpdatePlotter(Vector2Data value)
     {
         
     }
 
-    public override void SetParameter(Parameter<Vector2> par)
+    public override void SetParameter(Parameter<Vector2Data> par)
     {
         base.SetParameter(par);
         VectorParameter vec = (VectorParameter)par;

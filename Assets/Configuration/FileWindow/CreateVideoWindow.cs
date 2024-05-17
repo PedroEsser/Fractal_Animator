@@ -10,7 +10,7 @@ public class CreateVideoWindow : MonoBehaviour
     public RawImage Preview;
     public InputField FileName, Width, Height, FPS, Duration;
     public ProgressBar ProgressBar;
-    bool first = true;
+    public int updateRate = 10;
 
     public Vector2Int Dimensions { get => new Vector2Int(int.Parse(Width.text), int.Parse(Height.text)); }
 
@@ -20,29 +20,24 @@ public class CreateVideoWindow : MonoBehaviour
         //Height.onValueChanged.AddListener(str => UpdatePreview());
         FPS.text = ConfigurationHandler.CurrentConfig.Timeline.fps + "";
         Duration.text = ConfigurationHandler.CurrentConfig.Timeline.duration + "";
-        Width.onEndEdit.AddListener(str => UpdatePreview());
-        Height.onEndEdit.AddListener(str => UpdatePreview());
     }
 
-    public void Update()
+    private void Update()
     {
-        if (first)
-        {
+        if(ProgressBar.progress <= 0 && Time.frameCount % updateRate == 0)
             UpdatePreview();
-            first = false;
-        }
     }
 
-    private void UpdatePreview()
+    public void UpdatePreview()
     {
+        Vector2 dim = Dimensions;
         Vector2 windowDim = PreviewWindow.rectTransform.sizeDelta;
-        if (windowDim.x == Dimensions.x && windowDim.y == Dimensions.y)
+        if (windowDim.x == dim.x && windowDim.y == dim.y)
             return;
 
         float windowAR = windowDim.x / windowDim.y;
-        float ar = (float)Dimensions.x / Dimensions.y;
-        Vector2 dim = Vector2.zero;
-        if(ar > windowAR)
+        float ar = (float)dim.x / dim.y;
+        if (ar > windowAR)
         {
             dim.x = windowDim.x;
             dim.y = dim.x / ar;
@@ -80,13 +75,13 @@ public class CreateVideoWindow : MonoBehaviour
 
         if (duration == -1)
             duration = config.Timeline.duration;
-        Vector4 window = config.Settings.WindowHandler.Window;
+        Vector4 window = config.Settings.WindowSettings.Window;
         window.w = window.z * dimensions.y / dimensions.x;
 
         Material mat = new Material(Controller.Singleton.PlotterMaterial);
         mat.SetVector("_Window", window);
 
-        Texture2D tex = new Texture2D(dimensions.x, dimensions.y, TextureFormat.RGB24, false);
+        Texture2D tex = new Texture2D(dimensions.x, dimensions.y, TextureFormat.RGBA32, false);
         
         for (int i = 0; i < duration; i++)
         {
@@ -107,8 +102,8 @@ public class CreateVideoWindow : MonoBehaviour
             RenderTexture.active = null;
             RenderTexture.ReleaseTemporary(renderTexture);
             Preview.texture = tex;
-            byte[] bytes = tex.EncodeToJPG(85);
-            System.IO.File.WriteAllBytes(folder + "/Frame" + string.Format("{0:00000}", i) + ".jpg", bytes);
+            byte[] bytes = tex.EncodeToPNG();
+            System.IO.File.WriteAllBytes(folder + "/Frame" + string.Format("{0:00000}", i) + ".png", bytes);
             yield return null;
         }
         ProgressBar.SetProgress(1, "Finished");
@@ -121,7 +116,7 @@ public class CreateVideoWindow : MonoBehaviour
     {
         RenderTexture renderTexture = RenderTexture.GetTemporary(dimensions.x, dimensions.y, 0, RenderTextureFormat.ARGB32);
 
-        Vector4 window = ConfigurationHandler.CurrentConfig.Settings.WindowHandler.Window;
+        Vector4 window = ConfigurationHandler.CurrentConfig.Settings.WindowSettings.Window;
         window.w = window.z * dimensions.y / dimensions.x;
         Material mat = new Material(Controller.Singleton.PlotterMaterial);
         mat.SetVector("_Window", window);
@@ -133,7 +128,7 @@ public class CreateVideoWindow : MonoBehaviour
         Graphics.Blit(null, renderTexture, mat);
 
         // Create a Texture2D to read the pixels from the Render Texture
-        Texture2D tex = new Texture2D(dimensions.x, dimensions.y, TextureFormat.RGB24, false);
+        Texture2D tex = new Texture2D(dimensions.x, dimensions.y, TextureFormat.RGBA32, false);
 
         // Read pixels from the Render Texture to the Texture2D
         tex.ReadPixels(new Rect(0, 0, dimensions.x, dimensions.y), 0, 0);

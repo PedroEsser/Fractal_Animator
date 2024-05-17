@@ -1,7 +1,9 @@
 using System.IO;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 using SFB;
+
 
 public class TextureLoader : MonoBehaviour
 {
@@ -11,16 +13,16 @@ public class TextureLoader : MonoBehaviour
     public Texture2D Texture;
     public FileLoader FileLoader;
     public Sprite Empty;
+    public UnityEvent<string> OnTextureSelect;
 
     public void Start()
     {
         FileLoader.filters = new ExtensionFilter[] { new ExtensionFilter("", "png", "jpg", "jpeg") };
         Button.onClick.RemoveAllListeners();
         Button.onClick.AddListener(() => {
-
             TextureSelector selector = PopupWindowHandler.HandlePopup(Selector.gameObject, "Select Texture").GetComponent<TextureSelector>();
-            selector.OnTextureSelect.AddListener(tex => SetTexture(tex));
             selector.Show();
+            selector.OnTextureSelect.AddListener(tex => OnTextureSelect.Invoke(tex));
             });
     }
 

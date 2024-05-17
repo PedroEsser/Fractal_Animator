@@ -9,8 +9,8 @@ public class Mandelbrot : Fractal
 
     public Complex Power
     {
-        get => (Complex)FractalParameters.FindVectorParameter("Power").GetValue();
-        set => FractalParameters.FindVectorParameter("Power").SetValue(value);
+        get => (Complex)(Vector2)FractalParameters.FindVectorParameter("Power").GetValue();
+        set => FractalParameters.FindVectorParameter("Power").SetValue((Vector2)value);
     }
 
     public Mandelbrot(): base("Mandelbrot")

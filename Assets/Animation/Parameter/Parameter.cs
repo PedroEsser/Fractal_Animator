@@ -27,6 +27,8 @@ public abstract class Parameter<T>
         this.Value = value;
     }
 
+    public Parameter(string name) : this(name, default(T)) { }
+
     public virtual T ValueAt(float t) 
     {
         if (interpolation == null || interpolation.keyframes.Count == 0)
@@ -49,7 +51,7 @@ public abstract class Parameter<T>
         Value = ValueAt(t);
     }
 
-    public void BindTimeline(Timeline timeline)
+    public virtual void BindTimeline(Timeline timeline)
     {
         timeline.OnTimeChange.AddListener(t => SetT(t));
     }

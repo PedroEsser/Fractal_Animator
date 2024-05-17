@@ -17,7 +17,7 @@ public class FileLoader : MonoBehaviour
 
     public virtual void Start()
     {
-        OnFileSelect.AddListener(files => Name.text = GetName(files[0]));
+        //OnFileSelect.AddListener(files => Name.text = GetName(files[0]));
     }
 
     public void LoadFile()

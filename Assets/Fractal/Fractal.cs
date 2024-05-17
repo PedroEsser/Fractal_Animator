@@ -9,6 +9,7 @@ public abstract class Fractal : ParameterApplier
 
     public readonly string ShaderPath;
     public ParameterHandler FractalParameters;
+    public ColorParameter InsideColor;
 
     public float Iterations
     {
@@ -26,6 +27,7 @@ public abstract class Fractal : ParameterApplier
         set => FractalParameters.FindVectorParameter("Z Start").SetValue(value);
     }
 
+
     public Fractal(string ShaderPath)
     {
         this.ShaderPath = ShaderPath;
@@ -33,18 +35,21 @@ public abstract class Fractal : ParameterApplier
         FractalParameters.CreateNumberParameter("Iterations", 32, false);
         FractalParameters.CreateNumberParameter("Escape Radius", 10000);
         FractalParameters.CreateVectorParameter("Z Start", Vector2.zero);
+        InsideColor = FractalParameters.CreateColorParameter("Inside Color", Color.black);
     }
     public Fractal(Fractal seed)
     {
         this.ShaderPath = seed.ShaderPath;
         FractalParameters = new ParameterHandler(seed.FractalParameters);
+        InsideColor = seed.InsideColor;
     }
 
     public virtual void UpdateShader(Material mat)
     {
-        mat.SetFloat("_MaxIter", FractalParameters.FindParameter("Iterations").GetValue());
-        mat.SetFloat("_EscapeRadius", FractalParameters.FindParameter("Escape Radius").GetValue());
-        mat.SetVector("_ZStart", FractalParameters.FindVectorParameter("Z Start").GetValue());
+        mat.SetFloat("_MaxIter", Iterations);
+        mat.SetFloat("_EscapeRadius", EscapeRadius);
+        mat.SetVector("_ZStart", ZStart);
+        mat.SetColor("_InsideColor", InsideColor.GetValue().ToColor());
     }
 
     public abstract IEnumerable<Complex> GetOrbitIterator(Complex seed);

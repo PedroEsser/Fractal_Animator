@@ -1121,6 +1121,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7058534024184274536, guid: c77faf4731caf974aa90092336a2c852, type: 3}
+      propertyPath: window
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7058534024184274536, guid: c77faf4731caf974aa90092336a2c852, type: 3}
       propertyPath: interval
       value: 10
       objectReference: {fileID: 0}
@@ -1300,6 +1304,10 @@ PrefabInstance:
     - target: {fileID: 7058534024184274536, guid: c77faf4731caf974aa90092336a2c852, type: 3}
       propertyPath: smooth
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7058534024184274536, guid: c77faf4731caf974aa90092336a2c852, type: 3}
+      propertyPath: window
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7058534024184274536, guid: c77faf4731caf974aa90092336a2c852, type: 3}
       propertyPath: background.b

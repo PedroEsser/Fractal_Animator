@@ -11,7 +11,7 @@ public class FractalPlotter : MonoBehaviour
 
     private Vector2 beginDragCenter;
 
-    public WindowSettings WindowHandler { get => ConfigurationHandler.CurrentConfig.Settings.WindowHandler; }
+    public WindowSettings WindowHandler { get => ConfigurationHandler.CurrentConfig.Settings.WindowSettings; }
 
     void Start()
     {
@@ -27,7 +27,10 @@ public class FractalPlotter : MonoBehaviour
         entry.callback.RemoveAllListeners();
         entry.callback.AddListener((data) =>
         {
-            HandleZoom(((PointerEventData)data).scrollDelta.y);
+            if (Input.GetMouseButton(0))
+                HandleRotate(((PointerEventData)data).scrollDelta.y);
+            else
+                HandleZoom(((PointerEventData)data).scrollDelta.y);
         });
         trigger.triggers.Add(entry);
 
@@ -69,6 +72,20 @@ public class FractalPlotter : MonoBehaviour
         else
         {
             UndoHandler.DoParameterSetAction(WindowHandler.GetParameters().FindParameter("Zoom"), WindowHandler.Zoom + scrollDelta * 1f / 32, WindowHandler.Zoom);
+        }
+    }
+    
+    private void HandleRotate(float scrollDelta)
+    {
+        Action last = UndoHandler.GetLastAction();
+        if(last != null && last is ParameterAction<float>.ParameterSet l && l.parameter.Name == "Angle")
+        {
+            WindowHandler.Angle = WindowHandler.Angle - scrollDelta * 1f / 32;
+            l.setValue = WindowHandler.Angle;
+        }
+        else
+        {
+            UndoHandler.DoParameterSetAction(WindowHandler.GetParameters().FindParameter("Angle"), WindowHandler.Angle + scrollDelta * 1f / 32, WindowHandler.Angle);
         }
     }
 

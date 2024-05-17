@@ -1,15 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static VectorParameter;
 
-public class VectorAxisPlotter : ParameterPlotter<Vector2>
+public class VectorAxisPlotter : ParameterPlotter<Vector2Data>
 {
 
     public Plot2D plot2D;
     public DraggableElement button;
     public Vector2 Value;
 
-    public override void SetParameter(Parameter<Vector2> par)
+    public override void SetParameter(Parameter<Vector2Data> par)
     {
         base.SetParameter(par);
         Vector2 val = par.GetValue();
@@ -20,13 +21,13 @@ public class VectorAxisPlotter : ParameterPlotter<Vector2>
         plot2D.WindowSize = new Vector2(max, max);
     }
 
-    public override void UpdatePlotter(Vector2 value)
+    public override void UpdatePlotter(Vector2Data value)
     {
         if (button == null)
             return;
 
         if (button.BeingDragged)
-            parameter.SetValue(plot2D.PixelSpaceToWorldSpace(button.LocalPosition));
+            parameter.SetValue(new Vector2Data(plot2D.PixelSpaceToWorldSpace(button.LocalPosition)));
         else
             button.LocalPosition = plot2D.WorldSpaceToPixelSpace(value);
     }

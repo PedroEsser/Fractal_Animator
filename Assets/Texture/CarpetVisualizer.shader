@@ -6,7 +6,7 @@ Shader "Fractal/CarpetVisualizer"
         _BackgroundColor ("BackgroundColor", vector) = (1, 1, 1, 1)
         _Window("Window", vector) = (0, 0, 4, 4)
         _Length("Length", Float) = 10
-        _TexturesCount("_TexturesCount", Int) = 0
+        _TextureCount("_TextureCount", Int) = 0
     }
     SubShader
     {
@@ -44,33 +44,57 @@ Shader "Fractal/CarpetVisualizer"
                 return o;
             }
 
-            sampler2D _MainTex;
             UNITY_DECLARE_TEX2DARRAY(_Textures);
-            float _TexturesIndices[500];
-            float4 _TexturesTransformations[1000];
+            float _TextureIndices[500];
+            float4 _TextureTransformations[1000];
+            float4 _TextureColors[500];
             float _Length;
-            int _TexturesCount;
+            int _TextureCount;
 
             float4 _BackgroundColor;
 
+            float myFrac(float v) {
+                return frac(frac(v) + 1);
+            }
+
+            float myMod(float v, float m) {
+                return (v % m + m) % m;
+            }
 
             float4 getCarpetColorAt(float2 pos) {
-                pos.x = frac(pos.x);
-                pos.y = pos.y % _Length;
+                pos.x = myFrac(pos.x);
 
                 float2 diff;
-                for (int i = 0; i < _TexturesCount; i++) {
-                    diff = pos - _TexturesTransformations[i * 2].xy;
-                    if (abs(diff.x) < _TexturesTransformations[i * 2].z && abs(diff.y) < _TexturesTransformations[i * 2].w) {
-                        pos = (diff / _TexturesTransformations[i * 2].zw) + .5f;
-                        return UNITY_SAMPLE_TEX2DARRAY(_Textures, float3(pos.xy * _TexturesTransformations[i * 2 + 1].zw + _TexturesTransformations[i * 2 + 1].xy, _TexturesIndices[i]));
+                float2 texPos;
+                float4 color = 0;
+                for (int i = 0; i < _TextureCount; i++) {
+                    texPos = float2(myFrac(_TextureTransformations[i * 2].x), _TextureTransformations[i * 2].y);
+                    diff = pos - texPos;
+                    if (texPos.x + _TextureTransformations[i * 2].z > 1 && (pos.x + 1) < texPos.x + _TextureTransformations[i * 2].z)
+                        diff.x += 1;
+                    else if (texPos.x - _TextureTransformations[i * 2].z < 0 && (pos.x - 1) > texPos.x - _TextureTransformations[i * 2].z)
+                        diff.x -= 1;
+
+                    diff.y = myMod(diff.y + _Length / 2, _Length) - _Length / 2;
+                    if (abs(diff.x) < _TextureTransformations[i * 2].z && abs(diff.y) < _TextureTransformations[i * 2].w) {
+                        texPos = (diff / _TextureTransformations[i * 2].zw) + .5f;
+                        float4 col = UNITY_SAMPLE_TEX2DARRAY_LOD(_Textures, float3(texPos.xy * _TextureTransformations[i * 2 + 1].zw + _TextureTransformations[i * 2 + 1].xy, _TextureIndices[i]), 0);
+                        col *= _TextureColors[i];
+                        if (col.a == 1)
+                            return col;
+                        col.a = (1 - color.a) * col.a;
+                        color.rgb += col.rgb * col.a;
+                        color.a += col.a;
+                        //return (col * col.w + _BackgroundColor * (1 - col.w));
                     }
                 }
-                return _BackgroundColor;
+                return (color * color.w + _BackgroundColor * (1 - color.w));
+                
             }
 
             fixed4 frag(v2f i) : SV_Target
             {
+                
                 float2 pos = i.uv;
                 if (pos.x < 0 || pos.x > 1) {
                     pos *= 10;

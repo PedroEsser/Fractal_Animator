@@ -2,30 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 public class TextureParameterUI : ParameterUI<TextureData>
 {
-    public TextureLoader loader;
+
+    public TextureParameter TextureParameter { get => (TextureParameter)Parameter; }
+    public TextureLoader Loader;
+    public GameObject ParameterContainer;
     public VectorParameterUI Position, Size, Offset, Scale;
+    public ColorParameterUI Color;
     public Button ShowMore;
     public Sprite TriangleRight, TriangleDown;
-
-    public void HandleTextureSelect(string[] images)
-    {
-        if (Parameter == null)
-        {
-            TextureParameter par = new TextureParameter(NameText.text, "", Vector2.zero, new Vector2(1, 1), Vector2.zero, new Vector2(1, 1));
-            SetParameter(par);
-            ShowMore.gameObject.SetActive(true);
-        }
-        string name = FileLoader.GetFileName(images[0]);
-        ((TextureParameter)Parameter).TextureName = name;
-    }
+    public UnityEvent OnDelete;
 
     public override void SetParameter(Parameter<TextureData> parameter)
     {
+        base.SetParameter(parameter);
         TextureParameter par = (TextureParameter)parameter;
-        this.Parameter = par;
 
         Position.SetParameter(par.Position);
         Position.NameText.text = "Position";
@@ -39,7 +34,11 @@ public class TextureParameterUI : ParameterUI<TextureData>
         Scale.SetParameter(par.Scale);
         Scale.NameText.text = "Scale";
 
-        NameText.text = parameter.Name;
+        Color.SetParameter(par.Color);
+        Color.NameText.text = "Color";
+
+        ShowMore.gameObject.SetActive(true);
+        UpdateTextureIcon();
     }
 
     public void ToggleShowMore()
@@ -48,10 +47,18 @@ public class TextureParameterUI : ParameterUI<TextureData>
         showingMore = !showingMore;
         ShowMore.image.sprite = showingMore ? TriangleDown : TriangleRight;
 
-        Position.gameObject.SetActive(showingMore);
-        Size.gameObject.SetActive(showingMore);
-        Offset.gameObject.SetActive(showingMore);
-        Scale.gameObject.SetActive(showingMore);
+        Vector2 size = gameObject.GetComponent<RectTransform>().sizeDelta;
+        size.y += ParameterContainer.GetComponent<RectTransform>().sizeDelta.y * (showingMore ? 1 : -1);
+        gameObject.GetComponent<RectTransform>().sizeDelta = size;
+        ParameterContainer.SetActive(showingMore);
     }
+
+    public void UpdateTextureIcon()
+    {
+        if (TextureParameter.TextureName != null)
+            Loader.SetTexture(TextureHandler.GetTexture(TextureParameter.TextureName));
+    }
+
+    public void OnDeleteButtonPress() { OnDelete.Invoke(); }
 
 }

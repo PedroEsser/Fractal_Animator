@@ -8,8 +8,8 @@ public class AxisPlot : MonoBehaviour
 {
 
     public bool isVertical, smooth, isActive, isInt;
-    public double offset { get; private set; }
-    public double window { get; private set; }
+    public double offset;
+    public double window;
     public double smoothOffset, smoothWindow;
     public Image Axis;
     public GameObject labelPrefab;
@@ -29,7 +29,6 @@ public class AxisPlot : MonoBehaviour
 
     protected void Start()
     {
-        window = 2;
         Axis.material = Instantiate(Axis.material);         // little hack so different ojects with the smae material can have different properties
         Axis.material.SetColor("_Background", background);
         Axis.material.SetColor("_Foreground", foreground);

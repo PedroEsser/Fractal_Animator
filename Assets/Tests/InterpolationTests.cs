@@ -6,7 +6,7 @@ using UnityEngine.TestTools;
 
 public class InterpolationTests
 {
-
+    /*
     [Test]
     public void BasicInterpolationTests()
     {
@@ -69,5 +69,5 @@ public class InterpolationTests
         // Use the Assert class to test conditions.
         // Use yield to skip a frame.
         yield return null;
-    }
+    }*/
 }

@@ -10,34 +10,25 @@ public class CreateImageWindow : MonoBehaviour
     public RawImage Preview;
     public InputField FileName, Width, Height;
     public Dropdown FileType;
-    private bool first = true;
+    public int updateRate = 10;
 
     public Vector2Int Dimensions { get => new Vector2Int(int.Parse(Width.text), int.Parse(Height.text)); }
 
-    private void Start()
-    {
-        Width.onEndEdit.AddListener(str => UpdatePreview());
-        Height.onEndEdit.AddListener(str => UpdatePreview());
-    }
-
     private void Update()
     {
-        if (first)
-        {
+        if(Time.frameCount % updateRate == 0)
             UpdatePreview();
-            first = false;
-        }
     }
 
     public void UpdatePreview()
     {
+        Vector2 dim = Dimensions;
         Vector2 windowDim = PreviewWindow.rectTransform.sizeDelta;
-        if (windowDim.x == Dimensions.x && windowDim.y == Dimensions.y)
+        if (windowDim.x == dim.x && windowDim.y == dim.y)
             return;
 
         float windowAR = windowDim.x / windowDim.y;
-        float ar = (float)Dimensions.x / Dimensions.y;
-        Vector2 dim = Vector2.zero;
+        float ar = (float)dim.x / dim.y;
         if(ar > windowAR)
         {
             dim.x = windowDim.x;
@@ -68,9 +59,10 @@ public class CreateImageWindow : MonoBehaviour
     {
         RenderTexture renderTexture = RenderTexture.GetTemporary(dimensions.x, dimensions.y, 0, RenderTextureFormat.ARGB32);
 
-        Vector4 window = ConfigurationHandler.CurrentConfig.Settings.WindowHandler.Window;
+        Vector4 window = ConfigurationHandler.CurrentConfig.Settings.WindowSettings.Window;
         window.w = window.z * dimensions.y / dimensions.x;
         Material mat = new Material(Controller.Singleton.PlotterMaterial);
+        ConfigurationHandler.CurrentConfig.Settings.UpdateShader(mat);
         mat.SetVector("_Window", window);
 
         // Set the created Render Texture as the active render target
@@ -80,7 +72,7 @@ public class CreateImageWindow : MonoBehaviour
         Graphics.Blit(null, renderTexture, mat);
 
         // Create a Texture2D to read the pixels from the Render Texture
-        Texture2D tex = new Texture2D(dimensions.x, dimensions.y, TextureFormat.RGB24, false);
+        Texture2D tex = new Texture2D(dimensions.x, dimensions.y, TextureFormat.RGBA32, false);
 
         // Read pixels from the Render Texture to the Texture2D
         tex.ReadPixels(new Rect(0, 0, dimensions.x, dimensions.y), 0, 0);

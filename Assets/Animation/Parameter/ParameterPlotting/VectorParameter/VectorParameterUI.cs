@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using static VectorParameter;
 
-public class VectorParameterUI : ParameterUI<Vector2>
+public class VectorParameterUI : ParameterUI<Vector2Data>
 {
 
     public RectTransform rect;
@@ -46,12 +47,11 @@ public class VectorParameterUI : ParameterUI<Vector2>
         });
     }
 
-    public override void SetParameter(Parameter<Vector2> parameter)
+    public override void SetParameter(Parameter<Vector2Data> parameter)
     {
-        this.Parameter = parameter;
+        base.SetParameter(parameter);
         axisPlotter.SetParameter(parameter);
         inputPlotter.SetParameter(parameter);
-        NameText.text = parameter.Name;
     }
 
     public void SetAxisPlotter()
