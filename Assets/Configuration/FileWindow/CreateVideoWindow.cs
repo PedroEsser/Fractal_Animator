@@ -71,7 +71,7 @@ public class CreateVideoWindow : MonoBehaviour
         System.IO.Directory.CreateDirectory(folder);
         
 
-        Configuration config = new Configuration(ConfigurationHandler.CurrentConfig);
+        Configuration config = ConfigurationHandler.CurrentConfig;
 
         if (duration == -1)
             duration = config.Timeline.duration;
@@ -79,14 +79,19 @@ public class CreateVideoWindow : MonoBehaviour
         window.w = window.z * dimensions.y / dimensions.x;
 
         Material mat = new Material(Controller.Singleton.PlotterMaterial);
+        //Material mat = Controller.Singleton.PlotterMaterial;
         mat.SetVector("_Window", window);
 
         Texture2D tex = new Texture2D(dimensions.x, dimensions.y, TextureFormat.RGBA32, false);
-        
+        float accT = 0;
+        float t = 0;
+
         for (int i = 0; i < duration; i++)
         {
             while(ProgressBar.paused)
                 yield return null;
+
+            //t = System.DateTime.Now.Second;
             float percent = (float)(i+1) / duration;
             ProgressBar.SetProgress(percent, "Rendering frame " + (i+1) + " of " + duration + " (" + (100*percent).ToString("0.00") + "%)");
             config.Timeline.CurrentTime = i;
@@ -102,8 +107,8 @@ public class CreateVideoWindow : MonoBehaviour
             RenderTexture.active = null;
             RenderTexture.ReleaseTemporary(renderTexture);
             Preview.texture = tex;
-            byte[] bytes = tex.EncodeToPNG();
-            System.IO.File.WriteAllBytes(folder + "/Frame" + string.Format("{0:00000}", i) + ".png", bytes);
+            byte[] bytes = tex.EncodeToJPG(80);
+            System.IO.File.WriteAllBytes(folder + "/Frame" + string.Format("{0:00000}", i) + ".jpg", bytes);
             yield return null;
         }
         ProgressBar.SetProgress(1, "Finished");

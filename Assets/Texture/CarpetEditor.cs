@@ -10,11 +10,9 @@ public class CarpetEditor : MonoBehaviour
     public Plot2D plot;
     public InfiniteCarpet Carpet;
 
-
     public void Start()
     {
         Carpet = ConfigurationHandler.CurrentConfig.Settings.TextureSettings.Carpet;
-
     }
 
     private void Update()

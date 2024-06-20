@@ -14,6 +14,7 @@ public class Configuration
 
     public string defaultVideoPath;
     public string defaultTexturePath;
+    public int defaultImageWidth, defaultImageHeight;
 
     public Configuration()
     {
@@ -22,19 +23,21 @@ public class Configuration
         //Settings.GetAllParameters().BindTimeline(Timeline);
         defaultVideoPath = "";
         defaultTexturePath = "";
+        defaultImageWidth = 1920;
+        defaultImageHeight = 1080;
     }
 
     public Configuration(Configuration seed)
     {
         Settings = new Settings(seed.Settings);
         Timeline = new Timeline(seed.Timeline);
-        Settings.GetAllParameters().BindTimeline(Timeline);
+        Settings.BindTimeline(Timeline);
     }
 
     public void Init()
     {
         Timeline.OnTimeChange = new UnityEvent<float>();
-        Settings.GetAllParameters().BindTimeline(Timeline);
+        Settings.BindTimeline(Timeline);
     }
 
 }

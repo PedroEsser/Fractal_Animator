@@ -28,7 +28,7 @@ public class FileWindow : OptionsWindow
         string file = StandaloneFileBrowser.SaveFilePanel("Save Animation", "Assets/Configuration/configs", "config", "bin");
         if (file.Length == 0)
             return;
-        ConfigurationHandler.SaveConfig(file);
+        ConfigurationHandler.SaveConfig(FileLoader.GetName(file));
     }
 
     private void New()

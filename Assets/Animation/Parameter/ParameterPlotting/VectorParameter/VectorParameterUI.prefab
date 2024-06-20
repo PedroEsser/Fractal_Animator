@@ -120,7 +120,6 @@ MonoBehaviour:
   rightClickable: {fileID: 9106570788367016031}
   axisPlotter: {fileID: 2463495925378262343}
   inputPlotter: {fileID: 3105898979715351798}
-  polar: 0
 --- !u!114 &907778727800677737
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -952,7 +951,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 121128680977207822, guid: bac2d2c8326ab1d44a04d55b6a6d89a9, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 60
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 121128680977207822, guid: bac2d2c8326ab1d44a04d55b6a6d89a9, type: 3}
       propertyPath: m_LocalPosition.x

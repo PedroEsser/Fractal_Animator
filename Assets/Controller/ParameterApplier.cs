@@ -7,6 +7,7 @@ public interface ParameterApplier
 {
 
     public ParameterHandler GetParameters();
+    public void BindTimeline(Timeline timeline);
     public void UpdateShader(Material mat);
 
 }

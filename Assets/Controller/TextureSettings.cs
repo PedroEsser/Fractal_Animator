@@ -43,6 +43,12 @@ public class TextureSettings : ParameterApplier
         return CarpetParameters;
     }
 
+    public void BindTimeline(Timeline timeline)
+    {
+        CarpetParameters.BindTimeline(timeline);
+        Carpet.BindTimeline(timeline);
+    }
+
     public void UpdateShader(Material mat)
     {
         Vector2 textureOffset = CarpetOffset;

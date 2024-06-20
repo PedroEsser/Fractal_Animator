@@ -266,8 +266,16 @@ PrefabInstance:
       value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1897692565182279397, guid: 105c9a987cce7e24499576fdbe7bdb52, type: 3}
+      propertyPath: window
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1897692565182279397, guid: 105c9a987cce7e24499576fdbe7bdb52, type: 3}
       propertyPath: smoothOffset
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1897692565182279397, guid: 105c9a987cce7e24499576fdbe7bdb52, type: 3}
+      propertyPath: smoothWindow
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2888932620244757377, guid: 105c9a987cce7e24499576fdbe7bdb52, type: 3}
       propertyPath: m_Material

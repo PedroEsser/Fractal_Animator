@@ -64,4 +64,8 @@ public class WindowSettings : ParameterApplier
         mat.SetFloat("_Angle", WindowParameters.FindParameter("Angle").GetValue() * Mathf.PI * 2);
     }
 
+    public void BindTimeline(Timeline timeline)
+    {
+        WindowParameters.BindTimeline(timeline);
+    }
 }

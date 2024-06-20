@@ -15,7 +15,6 @@ public class VectorParameterUI : ParameterUI<Vector2Data>
     public RightClickable rightClickable;
     public VectorAxisPlotter axisPlotter;
     public InputVectorPlotter inputPlotter;
-    public bool polar;
 
     private Vector2 beginDragValue;
 
@@ -56,7 +55,8 @@ public class VectorParameterUI : ParameterUI<Vector2Data>
 
     public void SetAxisPlotter()
     {
-        rect.sizeDelta = new Vector2(rect.sizeDelta.x, 300);
+        float newHeight = rect.sizeDelta.y + axisPlotter.GetComponent<RectTransform>().rect.height - inputPlotter.GetComponent<RectTransform>().rect.height;
+        rect.sizeDelta = new Vector2(rect.sizeDelta.x, newHeight);
         inputPlotter.gameObject.SetActive(false);
         axisPlotter.gameObject.SetActive(true);
         RightClickHandler.HandleRightClickDisappear();
@@ -65,7 +65,8 @@ public class VectorParameterUI : ParameterUI<Vector2Data>
 
     public void SetInputPlotter()
     {
-        rect.sizeDelta = new Vector2(rect.sizeDelta.x, 90);
+        float newHeight = rect.sizeDelta.y - axisPlotter.GetComponent<RectTransform>().rect.height + inputPlotter.GetComponent<RectTransform>().rect.height;
+        rect.sizeDelta = new Vector2(rect.sizeDelta.x, newHeight);
         axisPlotter.gameObject.SetActive(false);
         inputPlotter.gameObject.SetActive(true);
         RightClickHandler.HandleRightClickDisappear();

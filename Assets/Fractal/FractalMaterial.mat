@@ -64,21 +64,23 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _Angle: -3.3379424
+    - _Angle: 3.1854596
     - _BumpScale: 1
+    - _CoefficientCount: 3
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _EscapeRadius: 10000
-    - _FOV: 40
+    - _FOV: 40.6
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _JuliaFlag: 0
     - _Length: 1
     - _LightAngle: 0
-    - _LightHeight: 1.4681944
+    - _LightHeight: 6.213104
     - _LightTextureAngle: 0
-    - _MaxIter: 36.24041
+    - _MaxIter: 86.51981
     - _MaxRayLength: 21.5
     - _Metallic: 0
     - _Mode: 0
@@ -87,21 +89,24 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _Step: 0.05
+    - _Step: 0.0001
     - _TexturesCount: 0
+    - _TransparentFlag: 0
     - _UVSec: 0
+    - _ViewRadius: 12.86
     - _ZWrite: 1
     m_Colors:
-    - _BackgroundColor: {r: 1, g: 1, b: 1, a: 0}
-    - _CarpetTransformation: {r: -9.676462, g: -3.2773936, b: 2, a: 1.5}
+    - _BackgroundColor: {r: 1, g: 1, b: 1, a: 1}
+    - _CarpetTransformation: {r: 0, g: 0, b: 1.25, a: 1.25}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FOV: {r: 0.5, g: 0.5, b: 0, a: 0}
-    - _InsideColor: {r: 0.88235295, g: 1, b: 0, a: 1}
-    - _Position: {r: -1.95, g: 0.4, b: 22.34, a: 0}
+    - _InsideColor: {r: 0, g: 0, b: 0, a: 0}
+    - _OutsideColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Position: {r: -2.99, g: 0, b: -0.05, a: 0}
     - _Power: {r: 2, g: 0, b: 0, a: 0}
     - _TextureTransformation: {r: 0, g: 0, b: 1, a: 1}
     - _TexturesTransformations: {r: 0, g: 0, b: 1, a: 1}
-    - _Window: {r: -1.3528993, g: 0.11847472, b: 0.14330126, a: 0.079114236}
-    - _ZStart: {r: -0.28912535, g: 0.09867859, b: 0, a: 0}
+    - _Window: {r: -0.8006553, g: -0.1775913, b: 0.00067038083, a: 0.00037010608}
+    - _ZStart: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []

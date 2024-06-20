@@ -27,9 +27,14 @@ public class InfiniteCarpet : ParameterApplier
         Length = seed.Length;
         TextureParameters = seed.TextureParameters;
         TexturesMapping = seed.TexturesMapping;
+        UpdateTexturesMapping();
     }
 
-
+    public void BindTimeline(Timeline timeline)
+    {
+        foreach (TextureParameter par in TextureParameters)
+            par.BindTimeline(timeline);
+    }
     public ParameterHandler GetParameters()
     {
         ParameterHandler parameters = new ParameterHandler();

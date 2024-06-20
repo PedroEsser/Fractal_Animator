@@ -5,7 +5,7 @@ Shader "Fractal/Mandelbrot"
         _Texture("Texture", 2D) = "white"
         _CarpetTransformation("CarpetTransformation", vector) = (0, 0, 1, 1)
         _Textures("Textures", 2DArray) = "" {}
-        _BackgroundColor("BackgroundColor", vector) = (1, 1, 1, 1)
+        _OutsideColor("OutsideColor", vector) = (1, 1, 1, 1)
         _InsideColor("InsideColor", vector) = (1, 1, 1, 1)
         _Window("Window", vector) = (0, 0, 4, 4)
         _Length("Length", Float) = 1
@@ -17,9 +17,12 @@ Shader "Fractal/Mandelbrot"
         _Angle("Angle", Float) = 0
         _ZStart("ZStart", vector) = (0, 0, 0, 0)
         _Power("Power", vector) = (2, 0, 0, 0)
+        _JuliaFlag("JuliaFlag", Int) = 0
+        _TransparentFlag("TransparentFlag", Int) = 0
     }
         SubShader
         {
+            Tags {"Queue" = "Transparent" "RenderType" = "Transparent"}
             // No culling or depth
             Cull Off ZWrite Off ZTest Always
 
@@ -53,9 +56,7 @@ Shader "Fractal/Mandelbrot"
                 {
                     v2f o;
                     o.vertex = UnityObjectToClipPos(v.vertex);
-                    o.uv = (v.uv - .5) * _Window.zw;
-                    o.uv = complex_mul(polar_to_rect(_Angle), o.uv.xy);
-                    o.uv += _Window.xy;
+                    o.uv = v.uv;
                     return o;
                 }
 
@@ -77,8 +78,10 @@ Shader "Fractal/Mandelbrot"
                 float _Length;
                 int _TextureCount;
 
-                float4 _BackgroundColor;
+                float4 _OutsideColor;
                 float4 _InsideColor;
+                int _TransparentFlag;
+                int _JuliaFlag;
 
                 float myFrac(float v) {
                     return frac(frac(v) + 1);
@@ -115,23 +118,53 @@ Shader "Fractal/Mandelbrot"
                             //return (col * col.w + _BackgroundColor * (1 - col.w));
                         }
                     }
-                    return (color * color.w + _BackgroundColor * (1 - color.w));
+                    return color;
 
+                }
+
+                float4 transparentColorAt(float2 pos) {
+                    pos *= 20;
+                    float sum = floor(pos.x) + floor(pos.y);
+                    if (sum % 2 == 0)
+                        return .5;
+                    return .8;
+                }
+
+                float4 blend(float4 a, float4 b) {
+                    float4 col = (a.a * a + b.a * b) / (a.a + b.a);
+                    col.a = max(a.a, b.a);
+                    return col;
                 }
 
 
                 fixed4 frag(v2f i) : SV_Target
                 {
-                    float2 c = i.uv;
+                    float2 pos = i.uv;
+                    float2 c = (pos - .5) * _Window.zw;
+                    c = complex_mul(polar_to_rect(_Angle), c);
+                    c += _Window.xy;
+
                     float2 z = float2(0.000000001, 0) + _ZStart.xy;
+
+                    if (_JuliaFlag == 1) {
+                        z = c;
+                        c = _ZStart.xy;
+                    }
+
                     float2 aux;
-                    float4 col = float4(0, 0, 0, 0);
+                    pos.y *= _Window.w / _Window.z;
+                    float4 col = transparentColorAt(pos);
                     float2 dC = float2(0, 0);
                     uint iteration;
-                    float power;
+                    float smoothIteration = 0;
 
                     [loop]
                     for (iteration = 0; iteration < _MaxIter && length(z) < _EscapeRadius; iteration++) {
+                        /*aux = polar_to_rect(float2(exp(z.x), z.y));     // e^z
+                        dC = complex_mul(dC, aux);
+                        dC.x += 1;
+                        z = aux + c;
+                        smoothIteration += exp(-_Power.x * length(z));*/
                         aux = complex_pow(z, float2(_Power.x - 1, _Power.y));
                         dC = complex_mul(float2(_Power.x, _Power.y), complex_mul(dC, aux));
                         dC.x += 1;
@@ -143,17 +176,16 @@ Shader "Fractal/Mandelbrot"
                         z = complex_mul(aux, z) + c;
                         iteration++;*/
                     }
-                    if (iteration > _MaxIter-1) return _InsideColor;
-                    float smoothIteration = iteration + 6 - log(log(length(z))) / (log(2) /* 3/2*/);
+                    if (iteration > _MaxIter-1) return _TransparentFlag == 0 ? _InsideColor : _InsideColor.a * _InsideColor + (1 - _InsideColor.a) * col;
+                    smoothIteration = iteration + 6 - log(log(length(z))) / log(_Power.x)/*(log(_Power.x * (_Power.x + 2)) / 2)*/;
 
-                    if (smoothIteration > _MaxIter) return _InsideColor;
+                    if (smoothIteration > _MaxIter) return _TransparentFlag == 0 ? _InsideColor : _InsideColor.a * _InsideColor + (1 - _InsideColor.a) * col;
 
                     dC = complex_div(z, dC);
                     dC /= length(dC);
 
-                    float2 light = polar_to_rect(2 * PI * _LightTextureAngle);
+                    float2 light = polar_to_rect(TAU * _LightTextureAngle);
                     float textureX = acos(dot(dC, light)) / PI;
-
                     
 
                     light = polar_to_rect(2 * PI * _LightAngle);
@@ -165,9 +197,12 @@ Shader "Fractal/Mandelbrot"
                     light = _CarpetTransformation.zw;
                     light.y /= -4;
                     light = _CarpetTransformation.xy + light * float2(textureX, smoothIteration);
-                    col = getCarpetColorAt(light);
-                    col.xyz *= brightness;
-                    return col;
+                    float4 carpetCol = getCarpetColorAt(light);
+
+                    carpetCol.rgb = carpetCol.a * carpetCol.rgb + (1 - carpetCol.a) * _OutsideColor.rgb * _OutsideColor.a;
+                    carpetCol.rgb *= brightness;
+                    carpetCol.a = carpetCol.a + (1 - carpetCol.a) * _OutsideColor.a;
+                    return _TransparentFlag == 0 ? carpetCol : carpetCol.a * carpetCol + (1 - carpetCol.a) * col;
                     //col = tex2D(_Texture, light);
                     //return col;
                     //return (col * col.w + (1-col.w) * _Color) * brightness;

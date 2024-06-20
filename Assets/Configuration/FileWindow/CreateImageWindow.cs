@@ -7,12 +7,28 @@ using SFB;
 public class CreateImageWindow : MonoBehaviour
 {
     public Image PreviewWindow;
-    public RawImage Preview;
+    public Image Preview;
     public InputField FileName, Width, Height;
     public Dropdown FileType;
     public int updateRate = 10;
 
     public Vector2Int Dimensions { get => new Vector2Int(int.Parse(Width.text), int.Parse(Height.text)); }
+
+    private void Start()
+    {
+        Material mat = new Material(Controller.Singleton.PlotterMaterial);
+        Preview.material = mat;
+        Width.text = ConfigurationHandler.CurrentConfig.defaultImageWidth + "";
+        Width.onEndEdit.AddListener(text => {
+            int.TryParse(text, out int result);
+            ConfigurationHandler.CurrentConfig.defaultImageWidth = result;
+        });
+        Height.text = ConfigurationHandler.CurrentConfig.defaultImageHeight + "";
+        Height.onEndEdit.AddListener(text => {
+            int.TryParse(text, out int result);
+            ConfigurationHandler.CurrentConfig.defaultImageHeight = result;
+        });
+    }
 
     private void Update()
     {
@@ -22,10 +38,13 @@ public class CreateImageWindow : MonoBehaviour
 
     public void UpdatePreview()
     {
-        Vector2 dim = Dimensions;
+        Vector2 dim;
+        try
+        {
+            dim = Dimensions;
+        }
+        catch { return; }
         Vector2 windowDim = PreviewWindow.rectTransform.sizeDelta;
-        if (windowDim.x == dim.x && windowDim.y == dim.y)
-            return;
 
         float windowAR = windowDim.x / windowDim.y;
         float ar = (float)dim.x / dim.y;
@@ -42,7 +61,11 @@ public class CreateImageWindow : MonoBehaviour
         if (dim.x == 0 || dim.y == 0)
             return;
         Preview.rectTransform.sizeDelta = dim;
-        Preview.texture = CreateImage(new Vector2Int((int)dim.x, (int)dim.y));
+        //Preview.texture = CreateImage(new Vector2Int((int)dim.x, (int)dim.y));
+        Vector4 window = ConfigurationHandler.CurrentConfig.Settings.WindowSettings.Window;
+        window.w = window.z * dim.y / dim.x;
+        ConfigurationHandler.CurrentConfig.Settings.UpdateShader(Preview.material);
+        Preview.material.SetVector("_Window", window);
     }
 
     public void Save()
@@ -50,7 +73,7 @@ public class CreateImageWindow : MonoBehaviour
         string file = StandaloneFileBrowser.SaveFilePanel("Save As", ConfigurationHandler.CurrentConfig.defaultTexturePath, FileName.text, FileType.captionText.text);
         if (file.Length != 0) 
         {
-            ConfigurationHandler.CurrentConfig.defaultTexturePath = file;
+            ConfigurationHandler.CurrentConfig.defaultTexturePath = file.Substring(0, file.LastIndexOf("\\"));
             SaveImage(CreateImage(Dimensions), file, FileType.captionText.text);
         }
     }

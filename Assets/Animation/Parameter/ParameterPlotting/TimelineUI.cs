@@ -72,6 +72,7 @@ public class TimelineUI : MonoBehaviour
             play = !play;
         backwards = false;
         UpdateIcons();
+        Controller.TogglePlay(play);
     }
 
     public void TogglePlayBackwards()

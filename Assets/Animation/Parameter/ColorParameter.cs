@@ -28,7 +28,7 @@ public class ColorParameter : Parameter<ColorData>
 
     public ColorParameter(string name, float r, float g, float b, float a) : 
         this(name, new NumberParameter(name + R_SUFFIX, r), new NumberParameter(name + G_SUFFIX, g), 
-            new NumberParameter(name + B_SUFFIX, b), new NumberParameter(name + A_SUFFIX, a), false) { }
+            new NumberParameter(name + B_SUFFIX, b), new NumberParameter(name + A_SUFFIX, a), true) { }
 
     public ColorParameter(string name, Color c) : this(name, c.r, c.g, c.b, c.a) { }
 
@@ -39,9 +39,14 @@ public class ColorParameter : Parameter<ColorData>
     {
         if (HSV)
         {
-            Color rgb = Color.HSVToRGB(R.GetValue(), G.GetValue(), B.GetValue());
+            Color rgb = Color.HSVToRGB(R.GetValue() - Mathf.Floor(R.GetValue()), G.GetValue(), B.GetValue());
             return new ColorData(rgb.r, rgb.g, rgb.b, A.GetValue());
         }
+        return new ColorData(R.GetValue(), G.GetValue(), B.GetValue(), A.GetValue());
+    }
+
+    public ColorData GetHSVValue()
+    {
         return new ColorData(R.GetValue(), G.GetValue(), B.GetValue(), A.GetValue());
     }
 
@@ -67,7 +72,7 @@ public class ColorParameter : Parameter<ColorData>
     {
         if (HSV)
         {
-            Color rgb = Color.HSVToRGB(R.ValueAt(t), G.ValueAt(t), B.ValueAt(t));
+            Color rgb = Color.HSVToRGB(R.ValueAt(t) - Mathf.Floor(R.ValueAt(t)), G.ValueAt(t), B.ValueAt(t));
             return new ColorData(To255(rgb.r), To255(rgb.g), To255(rgb.b), To255(A.ValueAt(t)));
         }
         return new ColorData(To255(R.ValueAt(t)), To255(G.ValueAt(t)), To255(B.ValueAt(t)), To255(A.ValueAt(t)));

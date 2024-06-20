@@ -17,6 +17,7 @@ public class TextureHandler : MonoBehaviour
         HANDLER = this;
         LoadDefaultTextures();
         LoadUserTextures();
+        ConfigurationHandler.CurrentConfig.Settings.TextureSettings.Carpet.UpdateTextures();
     }
 
     public static string HandleTextureLoad(string path)

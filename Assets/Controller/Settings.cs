@@ -18,6 +18,7 @@ public class Settings
         settings = new Dictionary<string, ParameterApplier>();
         WindowSettings = new WindowSettings();
         Fractal = new Mandelbrot();
+        //Fractal = new PolynomialFractal();
         TextureSettings = new TextureSettings();
     }
     public Settings(Settings seed)
@@ -50,6 +51,11 @@ public class Settings
                 return p.FindVectorParameter(name);
         }
         return null;
+    }
+
+    public void BindTimeline(Timeline timeline) {
+        foreach (ParameterApplier p in settings.Values)
+            p.BindTimeline(timeline);
     }
 
     public ParameterHandler GetAllParameters()

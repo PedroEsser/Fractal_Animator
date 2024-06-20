@@ -6,7 +6,7 @@ public class SettingsUI : MonoBehaviour
 {
 
     public ParameterWindow Window, Fractal, Texture;
-    public ColorParameterUI InsideColorUI;
+    public ColorParameterUI InsideColorUI, OutsideColorUI;
 
     public void SetSettings(Settings settings)
     {
@@ -14,6 +14,7 @@ public class SettingsUI : MonoBehaviour
         Fractal.SetParameters(settings.Fractal.GetParameters());
         Texture.SetParameters(settings.TextureSettings.GetParameters());
         InsideColorUI.SetParameter(settings.Fractal.InsideColor);
+        OutsideColorUI.SetParameter(settings.Fractal.OutsideColor);
     }
 
 }

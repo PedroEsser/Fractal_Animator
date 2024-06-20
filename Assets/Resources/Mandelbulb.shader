@@ -7,10 +7,10 @@ Shader "Fractal/Mandelbulb"
         _Position("Position", vector) = (-1, 0, 0, 0)
         _Window("Window", vector) = (1, 0, 0, 0)
         _FOV("FOV", Float) = 40
+        _ViewRadius("ViewRadius", Float) = 10
         _EscapeRadius("EscapeRadius", Float) = 100
         _MaxIter("MaxIter", Float) = 10
-        _MaxRayLength("MaxRayLength", Float) = 4
-        _Step("Step", Float) = 0.1
+        _Step("Step", Float) = 0.002
         _Power("Power", vector) = (8, 0, 0, 0)
     }
         SubShader
@@ -55,9 +55,9 @@ Shader "Fractal/Mandelbulb"
                 static const float PI = 3.141592653589793238462;
                 static const float TAU = 6.28318530717958647692;
                 float _MaxIter;
-                float _MaxRayLength;
                 float _EscapeRadius;
                 float _Step;
+                float _ViewRadius;
                 float _FOV;
                 float4 _Power;
                 float4 _BackgroundColor;
@@ -85,18 +85,41 @@ Shader "Fractal/Mandelbulb"
 
                 float mandelbulb(float3 c) {
                     float3 z = c;
+                    float dr = 1;
+
                     float3 aux = 0;
                     for (int i = 0; i < _MaxIter; i++) {
                         cartesianToSpherical(z, aux);
                         if (aux.x > 2)
-                            return aux.x;
+                            break;
+
+                        dr = pow(aux.x, _Power.x - 1) * _Power.x * dr + 1;
+
                         aux.x = pow(aux.x, _Power.x);
                         aux.y *= _Power.x;
                         aux.z *= _Power.x;
                         sphericalToCartesian(aux, z);
                         z += c;
                     }
-                    return length(z);
+                    return 0.5 * log(aux.x) * aux.x / dr;
+                }
+
+                float3 castRay(const float3 eye, const float3 ray, out float depth, out float steps)
+                {
+                    depth = 0.;
+                    steps = 0.;
+                    float dist;
+                    float3 intersection_point = eye;
+
+                    do
+                    {
+                        dist = mandelbulb(intersection_point);
+                        intersection_point += dist * ray;
+                        depth += dist;
+                        steps++;
+                    } while (depth < _ViewRadius && dist > _Step);
+
+                    return intersection_point;
                 }
 
                 float sdBox(float3 p, float3 b)
@@ -115,21 +138,27 @@ Shader "Fractal/Mandelbulb"
                         length(max(float3(q.x, q.y, p.z), 0.0)) + min(max(q.x, max(q.y, p.z)), 0.0));
                 }
 
-                //float3 castRay()
-
                 fixed4 frag(v2f i) : SV_Target
                 {
                     float2 coord = i.uv - .5;
                     coord.y *= _ScreenParams.y / _ScreenParams.x;
                     coord += _Window.xy;
-                    float3 ray = normalize(float3(coord * tan(_FOV), 1));
-                    coord *= float2(_FOV, _FOV * );
+                    float3 ray = 0;
+                    sphericalToCartesian(float3(1, coord * _FOV * PI / 180), ray);
 
-                    
-                    float3 step = 0;
-                    sphericalToCartesian(float3(1, coord.xy), step);
-                    step *= _Step;
-                    float3 b = float3(2, 2, 2);
+                    float depth = 0, steps = 0;
+
+                    float3 intersectionPoint = castRay(_Position.xyz + _Step * ray, ray, depth, steps);
+
+                    if (steps == _MaxIter)
+                        return 0;
+
+                    float ao = steps * .015;
+                    ao = 1 - ao / (ao + 1);
+                    ao *= ao;
+                    return ao;
+
+                    /*float3 b = float3(2, 2, 2);
                     for (float3 ray = _Position; length(ray - _Position) < _MaxRayLength; ray += step) {
                         
                         //angle.x = mandelbulb(ray);
@@ -140,8 +169,7 @@ Shader "Fractal/Mandelbulb"
                         if (sdBoxFrame(ray, b, 0.025) < 0)
                             //return length(ray - _Position) / _MaxRayLength;
                             return 1;
-                    }
-                    return 0;
+                    }*/
                 }
                 ENDCG
             }

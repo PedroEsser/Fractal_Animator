@@ -9,7 +9,7 @@ public abstract class Fractal : ParameterApplier
 
     public readonly string ShaderPath;
     public ParameterHandler FractalParameters;
-    public ColorParameter InsideColor;
+    public ColorParameter InsideColor, OutsideColor;
 
     public float Iterations
     {
@@ -36,12 +36,14 @@ public abstract class Fractal : ParameterApplier
         FractalParameters.CreateNumberParameter("Escape Radius", 10000);
         FractalParameters.CreateVectorParameter("Z Start", Vector2.zero);
         InsideColor = FractalParameters.CreateColorParameter("Inside Color", Color.black);
+        OutsideColor = FractalParameters.CreateColorParameter("Outside Color", Color.white);
     }
     public Fractal(Fractal seed)
     {
         this.ShaderPath = seed.ShaderPath;
         FractalParameters = new ParameterHandler(seed.FractalParameters);
         InsideColor = seed.InsideColor;
+        OutsideColor = seed.OutsideColor;
     }
 
     public virtual void UpdateShader(Material mat)
@@ -50,6 +52,7 @@ public abstract class Fractal : ParameterApplier
         mat.SetFloat("_EscapeRadius", EscapeRadius);
         mat.SetVector("_ZStart", ZStart);
         mat.SetColor("_InsideColor", InsideColor.GetValue().ToColor());
+        mat.SetColor("_OutsideColor", OutsideColor.GetValue().ToColor());
     }
 
     public abstract IEnumerable<Complex> GetOrbitIterator(Complex seed);
@@ -57,5 +60,10 @@ public abstract class Fractal : ParameterApplier
     public ParameterHandler GetParameters()
     {
         return FractalParameters;
+    }
+
+    public void BindTimeline(Timeline timeline)
+    {
+        FractalParameters.BindTimeline(timeline);
     }
 }

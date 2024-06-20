@@ -92,16 +92,19 @@ Shader "Fractal/CarpetVisualizer"
                 
             }
 
+            float transparentColorAt(float2 pos) {
+                pos *= 10;
+                float sum = floor(pos.x) + floor(pos.y);
+                if (sum % 2 == 0)
+                    return .5;
+                return .8;
+            }
+
             fixed4 frag(v2f i) : SV_Target
             {
-                
                 float2 pos = i.uv;
                 if (pos.x < 0 || pos.x > 1) {
-                    pos *= 10;
-                    float sum = floor(pos.x) + floor(pos.y);
-                    if (sum % 2 == 0)
-                        return .5;
-                    return .8;
+                    return transparentColorAt(pos);
                 }
                 return getCarpetColorAt(pos);
             }

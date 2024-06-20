@@ -19,6 +19,7 @@ public class Mandelbrot : Fractal
     }
     public Mandelbrot(Mandelbrot seed) : base(seed)
     {
+        FractalParameters.AddVectorParameter(seed.FractalParameters.FindVectorParameter("Power"));
     }
 
     public override IEnumerable<Complex> GetOrbitIterator(Complex seed)
