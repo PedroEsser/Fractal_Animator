@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: FractalMaterial
-  m_Shader: {fileID: 4800000, guid: 53fae07c9aaa9f04c989886a0de192ac, type: 3}
+  m_Shader: {fileID: 4800000, guid: 3c64d7a01dc578447a8d8b3c90aba419, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -64,7 +64,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _Angle: 3.1854596
+    - _Angle: 0
     - _BumpScale: 1
     - _CoefficientCount: 3
     - _Cutoff: 0.5
@@ -78,9 +78,9 @@ Material:
     - _JuliaFlag: 0
     - _Length: 1
     - _LightAngle: 0
-    - _LightHeight: 6.213104
+    - _LightHeight: 2
     - _LightTextureAngle: 0
-    - _MaxIter: 86.51981
+    - _MaxIter: 32
     - _MaxRayLength: 21.5
     - _Metallic: 0
     - _Mode: 0
@@ -97,16 +97,16 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _BackgroundColor: {r: 1, g: 1, b: 1, a: 1}
-    - _CarpetTransformation: {r: 0, g: 0, b: 1.25, a: 1.25}
+    - _CarpetTransformation: {r: 0, g: 0, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FOV: {r: 0.5, g: 0.5, b: 0, a: 0}
-    - _InsideColor: {r: 0, g: 0, b: 0, a: 0}
+    - _InsideColor: {r: 0, g: 0, b: 0, a: 1}
     - _OutsideColor: {r: 1, g: 1, b: 1, a: 1}
     - _Position: {r: -2.99, g: 0, b: -0.05, a: 0}
     - _Power: {r: 2, g: 0, b: 0, a: 0}
     - _TextureTransformation: {r: 0, g: 0, b: 1, a: 1}
     - _TexturesTransformations: {r: 0, g: 0, b: 1, a: 1}
-    - _Window: {r: -0.8006553, g: -0.1775913, b: 0.00067038083, a: 0.00037010608}
-    - _ZStart: {r: 0, g: 0, b: 0, a: 0}
+    - _Window: {r: 3.89614, g: 5.2994537, b: 6.978306, a: 3.8526063}
+    - _ZStart: {r: 4, g: 5, b: 0, a: 0}
   m_BuildTextureStacks: []

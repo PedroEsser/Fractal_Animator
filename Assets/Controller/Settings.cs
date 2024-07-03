@@ -17,8 +17,8 @@ public class Settings
     {
         settings = new Dictionary<string, ParameterApplier>();
         WindowSettings = new WindowSettings();
-        Fractal = new Mandelbrot();
-        //Fractal = new PolynomialFractal();
+        //Fractal = new Mandelbrot();
+        Fractal = new PolynomialFractal();
         TextureSettings = new TextureSettings();
     }
     public Settings(Settings seed)

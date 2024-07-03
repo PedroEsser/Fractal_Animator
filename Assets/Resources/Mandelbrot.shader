@@ -165,10 +165,17 @@ Shader "Fractal/Mandelbrot"
                         dC.x += 1;
                         z = aux + c;
                         smoothIteration += exp(-_Power.x * length(z));*/
-                        aux = complex_pow(z, float2(_Power.x - 1, _Power.y));
+                        /*aux = complex_pow(z, float2(_Power.x - 1, _Power.y));
                         dC = complex_mul(float2(_Power.x, _Power.y), complex_mul(dC, aux));
                         dC.x += 1;
-                        z = complex_mul(aux, z) + c;
+                        z = complex_mul(aux, z) + c;*/
+
+                        aux = complex_pow(z, float2(_Power.x - 1, _Power.y));
+                        z = complex_mul(z, aux);
+                        dC = complex_mul(float2(_Power.x, _Power.y), complex_mul(dC, aux));
+                        dC = complex_mul(-dC, complex_cos(z));
+                        dC.x += 1;
+                        z = complex_sin(z) + c;
 
                         /*aux = complex_pow(z, float2(_Power.x + 1, _Power.y));
                         dC = complex_mul(float2(_Power.x + 2, _Power.y), complex_mul(dC, aux));

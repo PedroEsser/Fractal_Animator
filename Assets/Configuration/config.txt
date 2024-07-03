@@ -1,1 +1,1 @@
-\diffConfig
+default_config

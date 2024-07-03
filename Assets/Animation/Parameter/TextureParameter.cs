@@ -36,7 +36,7 @@ public class TextureParameter : Parameter<TextureData>
 
     public TextureParameter(string name, string textureName) : this(
               name, textureName,
-              new Vector2(.5f, .5f), new Vector2(1, 1), Vector2.zero, new Vector2(1, 1), new Color32(255, 255, 255, 255))
+              new Vector2(.5f, .5f), new Vector2(1, 1), Vector2.zero, new Vector2(1, 1), new Color32(0, 0, 255, 255))
     { }
 
     public override TextureData GetValue()

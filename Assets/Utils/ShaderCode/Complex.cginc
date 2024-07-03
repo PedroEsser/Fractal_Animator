@@ -50,6 +50,10 @@ float2 complex_pow(float2 z, float2 pow)
     return polar_to_rect(polar);
 }
 
+float2 complex_exp(float2 z) {
+    return float2(cos(z.y), sin(z.y)) * exp(z.x);
+}
+
 float2 complex_log(float2 val) {
     return float2(.5 * log(dot(val, val)), atan2(val.y, val.x));
 }
@@ -64,4 +68,14 @@ float2 complex_polynomial(int count, float2 x, float4 coefficients[16])
         acc = complex_mul(acc, x);
     }
     return answer;
+}
+
+float2 complex_sin(float2 z) {
+    float r = -(exp(-z.y) - exp(z.y)) / 2;
+    return r * float2(sin(z.x), cos(z.x));
+}
+
+float2 complex_cos(float2 z) {
+    float2 exps = float2(exp(-z.y), exp(z.y));
+    return float2((exps.x + exps.y) * cos(z.x), (exps.x - exps.y) * sin(z.x)) / 2;
 }

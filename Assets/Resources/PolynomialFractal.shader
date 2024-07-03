@@ -147,10 +147,10 @@ Shader "Fractal/PolynomialFractal"
                     c = complex_mul(polar_to_rect(_Angle), c);
                     c += _Window.xy;
 
-                    //float2 z = float2(0.000000001, 0) + _ZStart.xy;
+                    float2 z = _ZStart.xy;
 
-                    float2 z = c;
-                    c = _ZStart.xy;
+                    //float2 z = c;
+                    //c = _ZStart.xy;
 
                     float2 aux;
                     pos.y *= _Window.w / _Window.z;

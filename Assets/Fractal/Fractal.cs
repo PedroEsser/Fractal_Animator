@@ -36,7 +36,7 @@ public abstract class Fractal : ParameterApplier
         FractalParameters.CreateNumberParameter("Escape Radius", 10000);
         FractalParameters.CreateVectorParameter("Z Start", Vector2.zero);
         InsideColor = FractalParameters.CreateColorParameter("Inside Color", Color.black);
-        OutsideColor = FractalParameters.CreateColorParameter("Outside Color", Color.white);
+        OutsideColor = FractalParameters.CreateColorParameter("Outside Color", new Color32(0, 0, 255, 255));
     }
     public Fractal(Fractal seed)
     {
