@@ -11,11 +11,12 @@ public class TextureParameterUI : ParameterUI<TextureData>
     public TextureParameter TextureParameter { get => (TextureParameter)Parameter; }
     public TextureLoader Loader;
     public GameObject ParameterContainer;
-    public VectorParameterUI Position, Size, Offset, Scale;
+    public VectorParameterUI Position, Size, Tiling, Scale;
     public ColorParameterUI Color;
     public Button ShowMore;
     public Sprite TriangleRight, TriangleDown;
-    public UnityEvent OnDelete;
+    public UnityEvent OnDelete, OnCopy;
+
 
     public override void SetParameter(Parameter<TextureData> parameter)
     {
@@ -28,8 +29,8 @@ public class TextureParameterUI : ParameterUI<TextureData>
         Size.SetParameter(par.Size);
         Size.NameText.text = "Size";
 
-        Offset.SetParameter(par.Offset);
-        Offset.NameText.text = "Offset";
+        Tiling.SetParameter(par.Tiling);
+        Tiling.NameText.text = "Tiling";
 
         Scale.SetParameter(par.Scale);
         Scale.NameText.text = "Scale";
@@ -59,6 +60,7 @@ public class TextureParameterUI : ParameterUI<TextureData>
             Loader.SetTexture(TextureHandler.GetTexture(TextureParameter.TextureName));
     }
 
-    public void OnDeleteButtonPress() { OnDelete.Invoke(); }
+    public void OnMinusButtonPress() { OnDelete.Invoke(); }
+    public void OnPlusButtonPress() { OnCopy.Invoke(); }
 
 }

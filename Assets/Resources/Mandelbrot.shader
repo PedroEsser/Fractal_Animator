@@ -8,7 +8,6 @@ Shader "Fractal/Mandelbrot"
         _OutsideColor("OutsideColor", vector) = (1, 1, 1, 1)
         _InsideColor("InsideColor", vector) = (1, 1, 1, 1)
         _Window("Window", vector) = (0, 0, 4, 4)
-        _Length("Length", Float) = 1
         _TexturesCount("_TextureCount", Int) = 0
         _LightAngle("LightAngle", Float) = 0
         _LightHeight("LightHeight", Float) = 1
@@ -75,7 +74,6 @@ Shader "Fractal/Mandelbrot"
                 float _TextureIndices[500];
                 float4 _TextureTransformations[1000];
                 float4 _TextureColors[500];
-                float _Length;
                 int _TextureCount;
 
                 float4 _OutsideColor;
@@ -97,29 +95,33 @@ Shader "Fractal/Mandelbrot"
                     float2 diff;
                     float2 texPos;
                     float4 color = 0;
+                    float aux;
                     for (int i = 0; i < _TextureCount; i++) {
-                        texPos = float2(myFrac(_TextureTransformations[i * 2].x), _TextureTransformations[i * 2].y);
+                        texPos = float2(_TextureTransformations[i * 2].x, _TextureTransformations[i * 2].y);
                         diff = pos - texPos;
-                        if (texPos.x + _TextureTransformations[i * 2].z > 1 && (pos.x + 1) < texPos.x + _TextureTransformations[i * 2].z)
-                            diff.x += 1;
-                        else if (texPos.x - _TextureTransformations[i * 2].z < 0 && (pos.x - 1) > texPos.x - _TextureTransformations[i * 2].z)
-                            diff.x -= 1;
 
-                        diff.y = myMod(diff.y + _Length / 2, _Length) - _Length / 2;
+                        //Tilling
+                        aux = _TextureTransformations[i * 2 + 1].x;
+                        if (aux != 0)
+                            diff.x = myMod(diff.x + aux / 2, aux) - aux / 2;
+
+                        aux = _TextureTransformations[i * 2 + 1].y;
+                        if (aux != 0)
+                            diff.y = myMod(diff.y + aux / 2, aux) - aux / 2;
+
+
                         if (abs(diff.x) < _TextureTransformations[i * 2].z && abs(diff.y) < _TextureTransformations[i * 2].w) {
                             texPos = (diff / _TextureTransformations[i * 2].zw) + .5f;
-                            float4 col = UNITY_SAMPLE_TEX2DARRAY_LOD(_Textures, float3(texPos.xy * _TextureTransformations[i * 2 + 1].zw + _TextureTransformations[i * 2 + 1].xy, _TextureIndices[i]), 0);
+                            float4 col = UNITY_SAMPLE_TEX2DARRAY_LOD(_Textures, float3(texPos.xy * _TextureTransformations[i * 2 + 1].zw + .25, _TextureIndices[i]), 0);
                             col *= _TextureColors[i];
                             if (col.a == 1)
                                 return col;
                             col.a = (1 - color.a) * col.a;
                             color.rgb += col.rgb * col.a;
                             color.a += col.a;
-                            //return (col * col.w + _BackgroundColor * (1 - col.w));
                         }
                     }
                     return color;
-
                 }
 
                 float4 transparentColorAt(float2 pos) {
@@ -144,6 +146,8 @@ Shader "Fractal/Mandelbrot"
                     c = complex_mul(polar_to_rect(_Angle), c);
                     c += _Window.xy;
 
+                    //c = complex_pow(c, float2(_Power.y, 0));
+
                     float2 z = float2(0.000000001, 0) + _ZStart.xy;
 
                     if (_JuliaFlag == 1) {
@@ -157,7 +161,6 @@ Shader "Fractal/Mandelbrot"
                     float2 dC = float2(0, 0);
                     uint iteration;
                     float smoothIteration = 0;
-
                     [loop]
                     for (iteration = 0; iteration < _MaxIter && length(z) < _EscapeRadius; iteration++) {
                         /*aux = polar_to_rect(float2(exp(z.x), z.y));     // e^z
@@ -171,20 +174,18 @@ Shader "Fractal/Mandelbrot"
                         z = complex_mul(aux, z) + c;*/
 
                         aux = complex_pow(z, float2(_Power.x - 1, _Power.y));
-                        z = complex_mul(z, aux);
                         dC = complex_mul(float2(_Power.x, _Power.y), complex_mul(dC, aux));
-                        dC = complex_mul(-dC, complex_cos(z));
                         dC.x += 1;
-                        z = complex_sin(z) + c;
+                        z = complex_mul(z, aux) + c;
 
-                        /*aux = complex_pow(z, float2(_Power.x + 1, _Power.y));
-                        dC = complex_mul(float2(_Power.x + 2, _Power.y), complex_mul(dC, aux));
+                        /*aux = complex_pow(z, float2(_Power.x + 1, 0));
+                        dC = complex_mul(float2(_Power.x + 2, 0), complex_mul(dC, aux));
                         dC.x += 1;
-                        z = complex_mul(aux, z) + c;
+                        z = complex_mul(z, aux) + c;
                         iteration++;*/
                     }
                     if (iteration > _MaxIter-1) return _TransparentFlag == 0 ? _InsideColor : _InsideColor.a * _InsideColor + (1 - _InsideColor.a) * col;
-                    smoothIteration = iteration + 6 - log(log(length(z))) / log(_Power.x)/*(log(_Power.x * (_Power.x + 2)) / 2)*/;
+                    smoothIteration = iteration + 6 - log(log(length(z))) / log(_Power.x) /*log(_Power.x * (_Power.x + 2)) * 2 */;
 
                     if (smoothIteration > _MaxIter) return _TransparentFlag == 0 ? _InsideColor : _InsideColor.a * _InsideColor + (1 - _InsideColor.a) * col;
 
@@ -202,7 +203,7 @@ Shader "Fractal/Mandelbrot"
                     //brightness = 1;
 
                     light = _CarpetTransformation.zw;
-                    light.y /= -4;
+                    light.y /= 4;
                     light = _CarpetTransformation.xy + light * float2(textureX, smoothIteration);
                     float4 carpetCol = getCarpetColorAt(light);
 

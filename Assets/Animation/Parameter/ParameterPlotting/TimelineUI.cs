@@ -20,22 +20,28 @@ public class TimelineUI : MonoBehaviour
 
     private void Start()
     {
-        timeline = ConfigurationHandler.CurrentConfig.Timeline;
+        OnConfigLoad(ConfigurationHandler.CurrentConfig);
+        ConfigurationHandler.OnLoad.AddListener(OnConfigLoad);
+    }
+
+    public void OnConfigLoad(Configuration config)
+    {
+        timeline = config.Timeline;
         timePlotter.SetParameter(new NumberParameter("t", timeline.CurrentTime));
         timePlotter.axis.SetOffset(95);
         timePlotter.axis.SetWindow(200);
-        
+
         timePlotter.button.onEndDrag.AddListener(ev => {
             int t = timeline.SetCurrentFrame(timePlotter.parameter.GetValue());
             timePlotter.parameter.SetValue(t);
-            Controller.CURRENT_AUDIO.time = t/60f;
+            Controller.CURRENT_AUDIO.time = t / 60f;
         });
         timeInput.onEndEdit.AddListener(str =>
         {
             int t = timeline.SetCurrentFrame(float.Parse(str));
             timePlotter.parameter.SetValue(t);
         });
-        
+
         fps.text = timeline.fps + "";
         fps.onEndEdit.AddListener(str => timeline.fps = int.Parse(str));
 
@@ -45,6 +51,8 @@ public class TimelineUI : MonoBehaviour
 
     public void Update()
     {
+        if (timeline == null)
+            return;
         timePlotter.axis.interval = new Vector2(0, timeline.duration);
         if (play)
         {
@@ -72,7 +80,7 @@ public class TimelineUI : MonoBehaviour
             play = !play;
         backwards = false;
         UpdateIcons();
-        Controller.TogglePlay(play);
+        //Controller.TogglePlay(play);
     }
 
     public void TogglePlayBackwards()

@@ -36,5 +36,9 @@ public class PopupWindowHandler : MonoBehaviour
         return HandlePopup(prefab, title, new Vector2(600, 800));
     }
 
+    public static void ClosePopup()
+    {
+        PopupWindow.gameObject.SetActive(false);
+    }
 
 }

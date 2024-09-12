@@ -44,6 +44,11 @@ public class VectorParameter : Parameter<Vector2Data>
         Y.BindTimeline(timeline);
     }
 
+    public override Parameter<Vector2Data> Copy()
+    {
+        return new VectorParameter(Name, GetValue());
+    }
+
     [Serializable()]
     public class Vector2Data
     {

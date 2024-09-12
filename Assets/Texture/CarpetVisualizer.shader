@@ -67,29 +67,32 @@ Shader "Fractal/CarpetVisualizer"
                 float2 diff;
                 float2 texPos;
                 float4 color = 0;
+                float aux;
                 for (int i = 0; i < _TextureCount; i++) {
-                    texPos = float2(myFrac(_TextureTransformations[i * 2].x), _TextureTransformations[i * 2].y);
+                    texPos = float2(_TextureTransformations[i * 2].x, _TextureTransformations[i * 2].y);
                     diff = pos - texPos;
-                    if (texPos.x + _TextureTransformations[i * 2].z > 1 && (pos.x + 1) < texPos.x + _TextureTransformations[i * 2].z)
-                        diff.x += 1;
-                    else if (texPos.x - _TextureTransformations[i * 2].z < 0 && (pos.x - 1) > texPos.x - _TextureTransformations[i * 2].z)
-                        diff.x -= 1;
 
-                    diff.y = myMod(diff.y + _Length / 2, _Length) - _Length / 2;
+                    aux = _TextureTransformations[i * 2 + 1].x;
+                    if (aux != 0)
+                        diff.x = myMod(diff.x + aux / 2, aux) - aux / 2;
+
+                    aux = _TextureTransformations[i * 2 + 1].y;
+                    if (aux != 0)
+                        diff.y = myMod(diff.y + aux / 2, aux) - aux / 2;
+
+
                     if (abs(diff.x) < _TextureTransformations[i * 2].z && abs(diff.y) < _TextureTransformations[i * 2].w) {
                         texPos = (diff / _TextureTransformations[i * 2].zw) + .5f;
-                        float4 col = UNITY_SAMPLE_TEX2DARRAY_LOD(_Textures, float3(texPos.xy * _TextureTransformations[i * 2 + 1].zw + _TextureTransformations[i * 2 + 1].xy, _TextureIndices[i]), 0);
+                        float4 col = UNITY_SAMPLE_TEX2DARRAY_LOD(_Textures, float3(texPos.xy * _TextureTransformations[i * 2 + 1].zw + .25, _TextureIndices[i]), 0);
                         col *= _TextureColors[i];
                         if (col.a == 1)
                             return col;
                         col.a = (1 - color.a) * col.a;
                         color.rgb += col.rgb * col.a;
                         color.a += col.a;
-                        //return (col * col.w + _BackgroundColor * (1 - col.w));
                     }
                 }
-                return (color * color.w + _BackgroundColor * (1 - color.w));
-                
+                return color;
             }
 
             float transparentColorAt(float2 pos) {
@@ -103,10 +106,14 @@ Shader "Fractal/CarpetVisualizer"
             fixed4 frag(v2f i) : SV_Target
             {
                 float2 pos = i.uv;
-                if (pos.x < 0 || pos.x > 1) {
+                float4 carpetColor = getCarpetColorAt(pos);
+
+                if (pos.x < 0 || pos.x > 1)
+                    return 0;
+                if (carpetColor.a == 0) 
                     return transparentColorAt(pos);
-                }
-                return getCarpetColorAt(pos);
+
+                return carpetColor;
             }
             ENDCG
         }

@@ -31,5 +31,8 @@ public class NumberParameter : Parameter<float>
         return UnityEngine.Object.Instantiate(AxisNumberPlotterPrefab, parent);
     }
 
-
+    public override Parameter<float> Copy()
+    {
+        return new NumberParameter(Name, GetValue(), isInt);
+    }
 }

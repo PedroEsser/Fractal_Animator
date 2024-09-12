@@ -6,30 +6,30 @@ using UnityEngine;
 public class ParameterHandlerV2
 {
 
-    public Dictionary<Type, ArrayList> Parameters;
+    public Dictionary<Type, List<Parameter<object>>> Parameters;
 
     public ParameterHandlerV2()
     {
-        Parameters = new Dictionary<Type, ArrayList>();
+        Parameters = new Dictionary<Type, List<Parameter<object>>>();
     }
 
     public void AddParameter<T>(Parameter<T> p)
     {
         if (!Parameters.ContainsKey(p.GetType()))
-            Parameters[typeof(T)] = new ArrayList();
+            Parameters[p.GetType()] = new List<Parameter<object>>();
 
-        Parameters[typeof(T)].Add(p);
+        Parameters[p.GetType()].Add(p as Parameter<object>);
     }
 
     public Parameter<T> GetParameter<T>(string name)
     {
         if (!Parameters.ContainsKey(typeof(T)))
             return null;
-        
-        foreach(Parameter<T> p in Parameters[typeof(T)])
+
+        foreach(Parameter<object> p in Parameters[typeof(T)])
         {
             if (p.Name == name)
-                return p;
+                return p as Parameter<T>;
         }
         return null;
     }
@@ -64,10 +64,13 @@ public class ParameterHandlerV2
 
     public void BindTimeline(Timeline timeline)
     {
-        foreach(KeyValuePair<Type,ArrayList> kv in Parameters)
+        foreach(KeyValuePair<Type,List<Parameter<object>>> kv in Parameters)
         {
             Type t = kv.Key;
-            foreach(Parameter<object> p in kv.Value)
+            Debug.Log(t);
+            Debug.Log(kv.Value.Count);
+            Debug.Log(kv.Value[0].Name);
+            foreach (Parameter<object> p in kv.Value)
             {
                 Debug.Log(p.Name);
                 p.BindTimeline(timeline);

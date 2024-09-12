@@ -30,7 +30,7 @@ public class ColorParameter : Parameter<ColorData>
         this(name, new NumberParameter(name + R_SUFFIX, r), new NumberParameter(name + G_SUFFIX, g), 
             new NumberParameter(name + B_SUFFIX, b), new NumberParameter(name + A_SUFFIX, a), true) { }
 
-    public ColorParameter(string name, Color c) : this(name, c.r, c.g, c.b, c.a) { }
+    public ColorParameter(string name, Color32 c) : this(name, From255(c.r), From255(c.g), From255(c.b), From255(c.a)) { }
 
     public static byte To255(float v) { return (byte)(v * 255); }
     public static float From255(byte b) { return ((float)b / 255); }
@@ -84,6 +84,11 @@ public class ColorParameter : Parameter<ColorData>
         G.BindTimeline(timeline);
         B.BindTimeline(timeline);
         A.BindTimeline(timeline);
+    }
+
+    public override Parameter<ColorData> Copy()
+    {
+        return new ColorParameter(Name, GetValue());
     }
 
     [Serializable()]

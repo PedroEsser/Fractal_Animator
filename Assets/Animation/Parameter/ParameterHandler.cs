@@ -90,7 +90,7 @@ public class ParameterHandler
     {
         AddVectorParameter(parameter.Position);
         AddVectorParameter(parameter.Size);
-        AddVectorParameter(parameter.Offset);
+        AddVectorParameter(parameter.Tiling);
         AddVectorParameter(parameter.Scale);
     }
 
@@ -106,7 +106,7 @@ public class ParameterHandler
         return 
             HasVectorParameter(name + TextureParameter.POSITION_SUFFIX) ||
             HasVectorParameter(name + TextureParameter.SIZE_SUFFIX) ||
-            HasVectorParameter(name + TextureParameter.OFFSET_SUFFIX) ||
+            HasVectorParameter(name + TextureParameter.TILING_SUFFIX) ||
             HasVectorParameter(name + TextureParameter.SCALE_SUFFIX);
     }
 

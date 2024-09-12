@@ -24,6 +24,8 @@ public static class ConfigurationHandler
 
     public static string GetContentFolderPath(string name) { return CONFIG_FOLDER_PATH + name + "_files\\"; }
 
+    public static UnityEvent<Configuration> OnLoad = new UnityEvent<Configuration>();
+
     public static void InitializeConfig()
     {
         try
@@ -42,7 +44,6 @@ public static class ConfigurationHandler
         BinaryFormatter formatter = new BinaryFormatter();
         Configuration config = (Configuration)formatter.Deserialize(stream);
         stream.Close();
-
         return config;
     }
 
@@ -61,7 +62,7 @@ public static class ConfigurationHandler
         CurrentConfig = LoadConfig(name);
         CurrentConfig.Init();
         SetLastConfigName(name);
-        Controller.SetConfig(CurrentConfig);
+        OnLoad.Invoke(CurrentConfig);
     }
 
     public static void SetNewConfig(string name)

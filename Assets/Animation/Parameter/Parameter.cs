@@ -56,4 +56,10 @@ public abstract class Parameter<T>
         timeline.OnTimeChange.AddListener(t => SetT(t));
     }
 
+    public abstract Parameter<T> Copy();
+
+    //public static implicit operator Parameter<object>(Parameter<T> p) => p;
+    //public static implicit operator Parameter<T>(Parameter<object> p) => p;
+
+
 }

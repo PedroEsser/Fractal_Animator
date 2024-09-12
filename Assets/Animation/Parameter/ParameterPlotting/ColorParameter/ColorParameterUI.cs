@@ -43,10 +43,6 @@ public class ColorParameterUI : ParameterUI<ColorData>
             rightClickable.AddOption("Color Picker", () => 
             {
                 SetPickerView();
-                ParameterHandlerV2 p = new ParameterHandlerV2();
-                p.AddParameter(Parameter);
-                p.CreateVectorParameter("test", Vector2.zero);
-                p.BindTimeline(ConfigurationHandler.CurrentConfig.Timeline);
             });
         }
         else

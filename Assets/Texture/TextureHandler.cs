@@ -18,6 +18,7 @@ public class TextureHandler : MonoBehaviour
         LoadDefaultTextures();
         LoadUserTextures();
         ConfigurationHandler.CurrentConfig.Settings.TextureSettings.Carpet.UpdateTextures();
+        ConfigurationHandler.OnLoad.AddListener(_ => LoadUserTextures());
     }
 
     public static string HandleTextureLoad(string path)
@@ -66,7 +67,7 @@ public class TextureHandler : MonoBehaviour
             if (!IsImage(path))
                 continue;
             Texture2D tex = GetImageFromPath(path);
-            HANDLER.DefaultTextures.Add(FileLoader.GetFileName(path), tex);
+            HANDLER.UserTextures.Add(FileLoader.GetFileName(path), tex);
         }
     }
 

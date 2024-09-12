@@ -16,6 +16,8 @@ public class UndoHandler : MonoBehaviour
     public void Update()
     {
         /**/
+        if (Input.GetKeyDown(KeyCode.T))
+            Test();
         if (Input.GetKeyDown(KeyCode.Z))
             Undo();
         if (Input.GetKeyDown(KeyCode.Y))
@@ -30,7 +32,14 @@ public class UndoHandler : MonoBehaviour
         }
     }
 
+    public void Test()
+    {
+        ParameterHandlerV2 p = new ParameterHandlerV2();
+        p.CreateVectorParameter("test", Vector2.zero);
+        p.BindTimeline(ConfigurationHandler.CurrentConfig.Timeline);
 
+        print(p.GetParameter<VectorParameter>("test"));
+    }
     public static void DoAction(Action action)
     {
         UndoStack.RemoveRange(CurrentAction, UndoStack.Count - CurrentAction);

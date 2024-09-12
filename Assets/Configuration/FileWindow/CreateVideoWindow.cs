@@ -76,7 +76,7 @@ public class CreateVideoWindow : MonoBehaviour
         if (duration == -1)
             duration = config.Timeline.duration;
         Vector4 window = config.Settings.WindowSettings.Window;
-        window.w = window.z * dimensions.y / dimensions.x;
+        window.w = window.z * dimensions.y / dimensions.x * 2;
 
         Material mat = new Material(Controller.Singleton.PlotterMaterial);
         //Material mat = Controller.Singleton.PlotterMaterial;
@@ -107,8 +107,8 @@ public class CreateVideoWindow : MonoBehaviour
             RenderTexture.active = null;
             RenderTexture.ReleaseTemporary(renderTexture);
             Preview.texture = tex;
-            byte[] bytes = tex.EncodeToJPG(80);
-            System.IO.File.WriteAllBytes(folder + "/Frame" + string.Format("{0:00000}", i) + ".jpg", bytes);
+            byte[] bytes = tex.EncodeToPNG();
+            System.IO.File.WriteAllBytes(folder + "/Frame" + string.Format("{0:00000}", i) + ".png", bytes);
             yield return null;
         }
         ProgressBar.SetProgress(1, "Finished");

@@ -9,7 +9,7 @@ public class OptionsWindow : MonoBehaviour
 
     public OptionUI OptionPrefab;
     public RectTransform rect;
-    public Image Container;
+    public GameObject Container;
     protected List<OptionUI> optionUIs = new List<OptionUI>();
     public Color IdleColor, HoverColor;
 

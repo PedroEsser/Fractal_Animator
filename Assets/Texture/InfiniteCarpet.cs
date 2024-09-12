@@ -7,7 +7,6 @@ using System;
 public class InfiniteCarpet : ParameterApplier
 {
 
-    public float Length;
     //public ColorParameter BackgroundColor;
     public List<TextureParameter> TextureParameters;
     public List<string> TexturesMapping;
@@ -17,14 +16,12 @@ public class InfiniteCarpet : ParameterApplier
 
     public InfiniteCarpet()
     {
-        Length = 1;
         TextureParameters = new List<TextureParameter>();
         TexturesMapping = new List<string>();
     }
 
     public InfiniteCarpet(InfiniteCarpet seed)
     {
-        Length = seed.Length;
         TextureParameters = seed.TextureParameters;
         TexturesMapping = seed.TexturesMapping;
         UpdateTexturesMapping();
@@ -54,9 +51,8 @@ public class InfiniteCarpet : ParameterApplier
             textureIndices[i] = IndexForTexture(tex.TextureName);
             TextureColors[i] = tex.Color.GetValue().ToColor();
             TextureTransformations[i * 2 + 0] = new Vector4(tex.Position.X.GetValue(), tex.Position.Y.GetValue(), tex.Size.X.GetValue()/2, tex.Size.Y.GetValue()/2);
-            TextureTransformations[i * 2 + 1] = new Vector4(tex.Offset.X.GetValue(), tex.Offset.Y.GetValue(), tex.Scale.X.GetValue()/2, tex.Scale.Y.GetValue()/2);
+            TextureTransformations[i * 2 + 1] = new Vector4(tex.Tiling.X.GetValue(), tex.Tiling.Y.GetValue(), tex.Scale.X.GetValue()/2, tex.Scale.Y.GetValue()/2);
         }
-        mat.SetFloat("_Length", Length);
         mat.SetFloatArray("_TextureIndices", textureIndices);
         mat.SetInt("_TextureCount", TextureParameters.Count);
         mat.SetVectorArray("_TextureTransformations", TextureTransformations);
@@ -101,6 +97,14 @@ public class InfiniteCarpet : ParameterApplier
         }
         tex.BindTimeline(ConfigurationHandler.CurrentConfig.Timeline);
         return tex;
+    }
+
+    public TextureParameter AddTextureCopy(TextureParameter par)
+    {
+        TextureParameter copy = (TextureParameter)par.Copy();
+        TextureParameters.Add(copy);
+        copy.BindTimeline(ConfigurationHandler.CurrentConfig.Timeline);
+        return copy;
     }
 
     public void HandleTextureChange(TextureParameter par, string newTextureName)

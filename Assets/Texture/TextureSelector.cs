@@ -32,16 +32,18 @@ public class TextureSelector : OptionsWindow
     {
         List<Option> options = new List<Option>();
         foreach (string name in TextureHandler.HANDLER.DefaultTextures.Keys)
-        {
             options.Add(new Option(name, () => OnTextureSelect.Invoke(name)));
-        }
+
+        foreach (string name in TextureHandler.HANDLER.UserTextures.Keys)
+            options.Add(new Option(name, () => OnTextureSelect.Invoke(name)));
+
         Appear(options);
     }
 
     private void LoadNewImage(string path)
     {
         string name = TextureHandler.HandleTextureLoad(path);
-        LoadOptionUI(new Option(name, () => OnTextureSelect.Invoke(name)));
+        OnTextureSelect.Invoke(name);
     }
 
     private void LoadOptionUI(Option o)

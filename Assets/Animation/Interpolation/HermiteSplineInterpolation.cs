@@ -26,8 +26,8 @@ public class HermiteSplineInterpolation : Interpolation<float>
 
     public override BasicInterpolation<float> CreateInterpolation(int startT, int endT, float startValue, float endValue)
     {
-        //return HermiteInterpolation.CreateLinear(startT, endT, startValue, endValue);
-        return HermiteInterpolation.CreateEaseInEaseOut(startT, endT, startValue, endValue);
+        return HermiteInterpolation.CreateLinear(startT, endT, startValue, endValue);
+        //return HermiteInterpolation.CreateEaseInEaseOut(startT, endT, startValue, endValue);
         //return HermiteInterpolation.CreateEaseIn(startT, endT, startValue, endValue);
     }
 }

@@ -23,6 +23,7 @@ public class Controller : MonoBehaviour
     void Awake()
     {
         Singleton = this;
+        ConfigurationHandler.OnLoad.AddListener(config => SetConfig(config));
         ConfigurationHandler.InitializeConfig();
         CURRENT_AUDIO = AudioSource;
         CURRENT_AUDIO_SPECTRUM = Spectrum;
@@ -58,6 +59,7 @@ public class Controller : MonoBehaviour
     public static void SetConfig(Configuration config)
     {
         Singleton.Plotter.material.shader = Resources.Load<Shader>(config.Settings.Fractal.ShaderPath);
+
         Singleton.SettingsUI.SetSettings(config.Settings);
         string[] files = Directory.GetFiles(ConfigurationHandler.CurrentContentFolder);
         if (files.Length == 0)

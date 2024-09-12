@@ -19,11 +19,17 @@ public class TextureLoader : MonoBehaviour
     {
         FileLoader.filters = new ExtensionFilter[] { new ExtensionFilter("", "png", "jpg", "jpeg") };
         Button.onClick.RemoveAllListeners();
-        Button.onClick.AddListener(() => {
-            TextureSelector selector = PopupWindowHandler.HandlePopup(Selector.gameObject, "Select Texture").GetComponent<TextureSelector>();
-            selector.Show();
-            selector.OnTextureSelect.AddListener(tex => OnTextureSelect.Invoke(tex));
-            });
+        Button.onClick.AddListener(() => SelectTexture());
+    }
+    
+    public void SelectTexture()
+    {
+        TextureSelector selector = PopupWindowHandler.HandlePopup(Selector.gameObject, "Select Texture").GetComponent<TextureSelector>();
+        selector.Show();
+        selector.OnTextureSelect.AddListener(tex => {
+            OnTextureSelect.Invoke(tex);
+            PopupWindowHandler.ClosePopup();
+        });
     }
 
     public void SetTexture(Texture2D tex)
