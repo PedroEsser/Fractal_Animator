@@ -9,13 +9,11 @@ public class TextureHandler : MonoBehaviour
     public static readonly int TEXTURE_SIZE = 2048;
     public static readonly string DEFAULT_TEXTURES_PATH = "Assets\\Texture\\DefaultTextures\\";
     public static TextureHandler HANDLER { get; private set; }
-    public Dictionary<string, Texture2D> DefaultTextures;
-    public Dictionary<string, Texture2D> UserTextures;
+    public Dictionary<string, Texture2D> Textures;
 
     void Start()
     {
         HANDLER = this;
-        LoadDefaultTextures();
         LoadUserTextures();
         ConfigurationHandler.CurrentConfig.Settings.TextureSettings.Carpet.UpdateTextures();
         ConfigurationHandler.OnLoad.AddListener(_ => LoadUserTextures());
@@ -28,11 +26,19 @@ public class TextureHandler : MonoBehaviour
         try
         {
             File.Copy(path, ConfigurationHandler.CurrentContentFolder + name);
-            HANDLER.UserTextures.Add(name, tex);
+            HANDLER.Textures.Add(name, tex);
         }
-        catch { print("File copy failed"); }
+        catch { 
+            print("File copy failed");
+            return null;
+        }
         ConfigurationHandler.CurrentConfig.defaultTexturePath = path.Substring(path.LastIndexOf("\\"));
         return name;
+    }
+
+    public static void UpdateVideoTexture(string name, Texture2D tex)
+    {
+        HANDLER.Textures[name] = tex;
     }
 
     private static string GetNextAvailableName(string name)
@@ -46,36 +52,26 @@ public class TextureHandler : MonoBehaviour
         return name + "(" + index + ")" + extension;
     }
     
-    public static void LoadDefaultTextures()
-    {
-        HANDLER.DefaultTextures = new Dictionary<string, Texture2D>();
-        string[] texturePaths = Directory.GetFiles(DEFAULT_TEXTURES_PATH);
-        foreach (string path in texturePaths)
-        {
-            if (!IsImage(path))
-                continue;
-            Texture2D tex = GetImageFromPath(path);
-            HANDLER.DefaultTextures.Add(FileLoader.GetName(path), tex);
-        }
-    }
     public static void LoadUserTextures()
     {
-        HANDLER.UserTextures = new Dictionary<string, Texture2D>();
+        HANDLER.Textures = new Dictionary<string, Texture2D>();
         string[] texturePaths = Directory.GetFiles(ConfigurationHandler.CurrentContentFolder);
         foreach(string path in texturePaths)
         {
             if (!IsImage(path))
                 continue;
             Texture2D tex = GetImageFromPath(path);
-            HANDLER.UserTextures.Add(FileLoader.GetFileName(path), tex);
+            HANDLER.Textures.Add(FileLoader.GetFileName(path), tex);
         }
+
+        // TODO load videos
     }
 
     public static Texture2D GetTexture(string name)
     {
-        if (HANDLER.UserTextures.ContainsKey(name))
-            return HANDLER.UserTextures[name];
-        return HANDLER.DefaultTextures[name];
+        if (HANDLER.Textures.ContainsKey(name))
+            return HANDLER.Textures[name];
+        return null;
     }
 
     public static Texture2D GetImageFromPath(string path)
@@ -90,6 +86,12 @@ public class TextureHandler : MonoBehaviour
         newTex.Apply();*/
         return Resize(tex, TEXTURE_SIZE, TEXTURE_SIZE);
     }
+
+    public static Texture2D Resize(Texture2D texture2D)
+    {
+        return Resize(texture2D, TEXTURE_SIZE, TEXTURE_SIZE);
+    }
+
 
     public static Texture2D Resize(Texture2D texture2D, int width, int height)
     {

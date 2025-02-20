@@ -13,6 +13,8 @@ public class InfiniteCarpet : ParameterApplier
 
     [NonSerialized()] 
     public Texture2DArray LoadedTextures;
+    [NonSerialized()] 
+    public Texture Video1;
 
     public InfiniteCarpet()
     {
@@ -59,6 +61,9 @@ public class InfiniteCarpet : ParameterApplier
         mat.SetColorArray("_TextureColors", TextureColors);
         if(LoadedTextures != null)
             mat.SetTexture("_Textures", LoadedTextures);
+
+        if (Video1 != null)
+            mat.SetTexture("_Video1", Video1);
     }
 
     private void UpdateTexturesMapping()
@@ -73,6 +78,11 @@ public class InfiniteCarpet : ParameterApplier
         UpdateTextures();
     }
 
+    public void UpdateVideoTexture(string textureName, Texture tex)
+    {
+        Video1 = tex;
+    }
+
     public void UpdateTextures()
     {
         if (TextureParameters.Count == 0)
@@ -81,12 +91,13 @@ public class InfiniteCarpet : ParameterApplier
         for(int i = 0; i < TexturesMapping.Count; i++)
         {
             Texture2D tex = TextureHandler.GetTexture(TexturesMapping[i]);
-            LoadedTextures.SetPixels32(tex.GetPixels32(), i);
+            if(tex != null)
+                LoadedTextures.SetPixels32(tex.GetPixels32(), i);
         }
         LoadedTextures.Apply();
     }
 
-    public TextureParameter AddTexture(string name, string textureName = null)
+    public TextureParameter AddTexture(string name, string textureName)
     {
         TextureParameter tex = new TextureParameter(name, textureName);
         TextureParameters.Add(tex);
@@ -96,6 +107,13 @@ public class InfiniteCarpet : ParameterApplier
             UpdateTextures();
         }
         tex.BindTimeline(ConfigurationHandler.CurrentConfig.Timeline);
+        return tex;
+    }
+    
+    public TextureParameter AddVideoTexture(string name)
+    {
+        TextureParameter tex = new TextureParameter(name, "_Video1");
+        TextureParameters.Add(tex);
         return tex;
     }
 
@@ -109,6 +127,10 @@ public class InfiniteCarpet : ParameterApplier
 
     public void HandleTextureChange(TextureParameter par, string newTextureName)
     {
+        if (TexturesMapping.Contains(newTextureName))
+        {
+
+        }
         par.TextureName = newTextureName;
         UpdateTexturesMapping();
     }
@@ -126,6 +148,11 @@ public class InfiniteCarpet : ParameterApplier
         UpdateTexturesMapping();
     }
 
-    private int IndexForTexture(string name) { return TexturesMapping.IndexOf(name); }
+    private int IndexForTexture(string name) 
+    {
+        if (name == "_Video1")
+            return -1;
+        return TexturesMapping.IndexOf(name); 
+    }
 
 }

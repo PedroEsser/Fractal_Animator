@@ -31,10 +31,8 @@ public class TextureSelector : OptionsWindow
     public void Show()
     {
         List<Option> options = new List<Option>();
-        foreach (string name in TextureHandler.HANDLER.DefaultTextures.Keys)
-            options.Add(new Option(name, () => OnTextureSelect.Invoke(name)));
 
-        foreach (string name in TextureHandler.HANDLER.UserTextures.Keys)
+        foreach (string name in TextureHandler.HANDLER.Textures.Keys)
             options.Add(new Option(name, () => OnTextureSelect.Invoke(name)));
 
         Appear(options);

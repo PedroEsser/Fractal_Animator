@@ -30,6 +30,6 @@ public class ProgressBar : MonoBehaviour
 
     public void TogglePlay() { SetPaused(!paused); }
 
-    private void UpdatePlayButton() { PlayButton.image.sprite = paused ? Pause : Play; }
+    private void UpdatePlayButton() { PlayButton.image.sprite = paused ? Play : Pause; }
 
 }

@@ -22,7 +22,7 @@ public class Configuration
         Timeline = new Timeline();
         //Settings.GetAllParameters().BindTimeline(Timeline);
         defaultVideoPath = "";
-        defaultTexturePath = "";
+        defaultTexturePath = "Assets/Texture/DefaultTextures";
         defaultImageWidth = 1920;
         defaultImageHeight = 1080;
     }

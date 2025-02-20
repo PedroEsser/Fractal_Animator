@@ -246,7 +246,7 @@ GameObject:
   - component: {fileID: 1345866872369133329}
   - component: {fileID: 5772939551636381957}
   m_Layer: 0
-  m_Name: TextureLoader
+  m_Name: MediaLoader
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -373,6 +373,11 @@ MonoBehaviour:
   Texture: {fileID: 0}
   FileLoader: {fileID: 1362621235644941290}
   Empty: {fileID: 21300000, guid: 16e7bd9c7b098ed4cbc921ae63d267ef, type: 3}
+  texture: 0
+  video: 0
+  OnMediaSelect:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &4851665946506549774
 GameObject:
   m_ObjectHideFlags: 0
@@ -670,7 +675,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2696740604956878275}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1362621235644941290}
+        m_TargetAssemblyTypeName: FileLoader, Assembly-CSharp
+        m_MethodName: LoadFile
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &8576760487524245354
 MonoBehaviour:
   m_ObjectHideFlags: 0

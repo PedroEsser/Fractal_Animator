@@ -2,7 +2,7 @@ Shader "Fractal/Mandelbrot"
 {
     Properties
     {
-        _Texture("Texture", 2D) = "white"
+        _Video1("Video1", 2D) = "white"
         _CarpetTransformation("CarpetTransformation", vector) = (0, 0, 1, 1)
         _Textures("Textures", 2DArray) = "" {}
         _OutsideColor("OutsideColor", vector) = (1, 1, 1, 1)
@@ -69,6 +69,7 @@ Shader "Fractal/Mandelbrot"
                 float4 _ZStart;
                 float4 _Power;
 
+                sampler2D _Video1;
                 float4 _CarpetTransformation;
                 UNITY_DECLARE_TEX2DARRAY(_Textures);
                 float _TextureIndices[500];
@@ -96,6 +97,7 @@ Shader "Fractal/Mandelbrot"
                     float2 texPos;
                     float4 color = 0;
                     float aux;
+                    [loop]
                     for (int i = 0; i < _TextureCount; i++) {
                         texPos = float2(_TextureTransformations[i * 2].x, _TextureTransformations[i * 2].y);
                         diff = pos - texPos;
@@ -112,7 +114,13 @@ Shader "Fractal/Mandelbrot"
 
                         if (abs(diff.x) < _TextureTransformations[i * 2].z && abs(diff.y) < _TextureTransformations[i * 2].w) {
                             texPos = (diff / _TextureTransformations[i * 2].zw) + .5f;
-                            float4 col = UNITY_SAMPLE_TEX2DARRAY_LOD(_Textures, float3(texPos.xy * _TextureTransformations[i * 2 + 1].zw + .25, _TextureIndices[i]), 0);
+                            texPos = texPos.xy * _TextureTransformations[i * 2 + 1].zw + .25;
+                            float4 col;
+                            if(_TextureIndices[i] < 0)
+                                col = tex2D(_Video1, texPos);
+                            else
+                                col = UNITY_SAMPLE_TEX2DARRAY_LOD(_Textures, float3(texPos, _TextureIndices[i]), 0);
+
                             col *= _TextureColors[i];
                             if (col.a == 1)
                                 return col;
@@ -146,7 +154,7 @@ Shader "Fractal/Mandelbrot"
                     c = complex_mul(polar_to_rect(_Angle), c);
                     c += _Window.xy;
 
-                    //c = complex_pow(c, float2(_Power.y, 0));
+                    //c = complex_pow(c, float2(1.016, 0));
 
                     float2 z = float2(0.000000001, 0) + _ZStart.xy;
 
@@ -168,24 +176,30 @@ Shader "Fractal/Mandelbrot"
                         dC.x += 1;
                         z = aux + c;
                         smoothIteration += exp(-_Power.x * length(z));*/
-                        /*aux = complex_pow(z, float2(_Power.x - 1, _Power.y));
+                        aux = complex_pow(z, float2(_Power.x - 1, _Power.y));
                         dC = complex_mul(float2(_Power.x, _Power.y), complex_mul(dC, aux));
                         dC.x += 1;
-                        z = complex_mul(aux, z) + c;*/
+                        z = complex_mul(aux, z) + c;
 
-                        aux = complex_pow(z, float2(_Power.x - 1, _Power.y));
+                        /*aux = complex_pow(z, float2(_Power.x - 1, _Power.y));
                         dC = complex_mul(float2(_Power.x, _Power.y), complex_mul(dC, aux));
                         dC.x += 1;
                         z = complex_mul(z, aux) + c;
 
-                        /*aux = complex_pow(z, float2(_Power.x + 1, 0));
+                        aux = complex_pow(z, float2(_Power.x + 1, 0));
                         dC = complex_mul(float2(_Power.x + 2, 0), complex_mul(dC, aux));
                         dC.x += 1;
                         z = complex_mul(z, aux) + c;
                         iteration++;*/
+
+                        /*aux = complex_pow(z, z);
+                        dC = complex_mul(aux, complex_mul(dC, complex_log(z) + 1));
+                        dC.x += 1;
+                        z = aux + c;*/
                     }
                     if (iteration > _MaxIter-1) return _TransparentFlag == 0 ? _InsideColor : _InsideColor.a * _InsideColor + (1 - _InsideColor.a) * col;
                     smoothIteration = iteration + 6 - log(log(length(z))) / log(_Power.x) /*log(_Power.x * (_Power.x + 2)) * 2 */;
+                    //smoothIteration = iteration + 4 - log(log(length(z))) /*log(_Power.x * (_Power.x + 2)) * 2 */;
 
                     if (smoothIteration > _MaxIter) return _TransparentFlag == 0 ? _InsideColor : _InsideColor.a * _InsideColor + (1 - _InsideColor.a) * col;
 

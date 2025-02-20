@@ -13,6 +13,7 @@ public class CarpetEditor : MonoBehaviour
     public void Start()
     {
         Carpet = ConfigurationHandler.CurrentConfig.Settings.TextureSettings.Carpet;
+        ConfigurationHandler.OnLoad.AddListener(config => Carpet = config.Settings.TextureSettings.Carpet);
     }
 
     private void Update()

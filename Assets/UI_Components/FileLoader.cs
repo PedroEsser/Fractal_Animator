@@ -38,5 +38,6 @@ public class FileLoader : MonoBehaviour
 
     public static string GetFileName(string file) { return file.Substring(file.LastIndexOf("\\") + 1, file.Length - file.LastIndexOf("\\") - 1); }
     public static string GetName(string file) { return file.Substring(file.LastIndexOf("\\") + 1, file.LastIndexOf(".") - file.LastIndexOf("\\") - 1); }
+    public static string GetExtension(string file) { return file.Substring(file.LastIndexOf(".") + 1); }
 
 }

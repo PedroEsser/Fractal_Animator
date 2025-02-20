@@ -9,7 +9,7 @@ public class TextureParameterUI : ParameterUI<TextureData>
 {
 
     public TextureParameter TextureParameter { get => (TextureParameter)Parameter; }
-    public TextureLoader Loader;
+    public MediaLoader Loader;
     public GameObject ParameterContainer;
     public VectorParameterUI Position, Size, Tiling, Scale;
     public ColorParameterUI Color;
@@ -38,7 +38,6 @@ public class TextureParameterUI : ParameterUI<TextureData>
         Color.SetParameter(par.Color);
         Color.NameText.text = "Color";
 
-        ShowMore.gameObject.SetActive(true);
         UpdateTextureIcon();
     }
 
@@ -56,8 +55,9 @@ public class TextureParameterUI : ParameterUI<TextureData>
 
     public void UpdateTextureIcon()
     {
-        if (TextureParameter.TextureName != null)
-            Loader.SetTexture(TextureHandler.GetTexture(TextureParameter.TextureName));
+        Texture2D tex = TextureHandler.GetTexture(TextureParameter.TextureName);
+        if(tex != null)
+            Loader.SetTexture(tex);
     }
 
     public void OnMinusButtonPress() { OnDelete.Invoke(); }

@@ -15,7 +15,6 @@ public class UndoHandler : MonoBehaviour
 
     public void Update()
     {
-        /**/
         if (Input.GetKeyDown(KeyCode.T))
             Test();
         if (Input.GetKeyDown(KeyCode.Z))
